@@ -1,12 +1,10 @@
 import discord
 import io
 import contextlib
-import random
 import requests
 
 import textwrap
 from traceback import format_exception
-
 from discord.ext import commands
 from src.commands.helpers import generate_random, Pag, clean_code
 
@@ -62,6 +60,7 @@ class Misc(commands.Cog):
         else:
             await ctx.send(f":x: **{username}** does not have a RiiTag!")
 
+
     @commands.command()
     async def table(self, ctx):
         embed = discord.Embed(colour=0x00FF00)
@@ -74,7 +73,7 @@ class Misc(commands.Cog):
         if username is None:
             username = ctx.author
         randomizer = generate_random(6)
-        if requests.get(f"https://card-3b2.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}").status_code != 404:
+        if requests.get(f"https://card-3b2.wiilink24.com/cards/{username.id}.jpg?randomizer=0.{randomizer}").status_code != 404:
             user = username.id
             em = discord.Embed(color=0x00FF00)
             em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)
@@ -83,18 +82,20 @@ class Misc(commands.Cog):
             )
             await ctx.channel.send(embed=em)
         else:
-             await ctx.send(f":x: **{username}** does not have a Digicard!")
+            await ctx.send(f":x: **{username}** does not have a Digicard!")
 
     @commands.command(pass_context=True)
     async def userinfo(self, ctx, *, user: discord.Member = None):
         if user is None:
             user = ctx.author
         date_format = "%a, %d %b %Y %I:%M %p"
-        embed = discord.Embed(color=0x00FF00, description=user.mention)
+        embed = discord.Embed(color=0x00FF00)
         embed.set_author(name=str(user), icon_url=user.avatar_url)
         embed.set_thumbnail(url=user.avatar_url)
-        members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
-        embed.add_field(name="Registered", value=user.created_at.strftime(date_format))
+        embed.add_field(name="User ID", value=user.id, inline=False)
+        embed.add_field(name="Nickname", value=user.display_name, inline=False)
+        embed.add_field(name="Registered", value=user.created_at.strftime(date _format), inline=False)
+        embed.add_field(name="Joined At", value=user.joined_at.strftime(date_format), inline=False)
         if len(user.roles) > 1:
             role_string = " ".join([r.mention for r in user.roles][1:])
             embed.add_field(
@@ -102,15 +103,6 @@ class Misc(commands.Cog):
                 value=role_string,
                 inline=False,
             )
-        perm_string = ", ".join(
-            [
-                str(p[0]).replace("_", " ").title()
-                for p in user.guild_permissions
-                if p[1]
-            ]
-        )
-        embed.add_field(name="Guild permissions", value=perm_string, inline=False)
-        embed.set_footer(text="ID: " + str(user.id))
         await ctx.send(embed=embed)
 
     # Service Stats
@@ -160,7 +152,6 @@ class Misc(commands.Cog):
         )
         await message.channel.send(title, embed=embed)
 
-
     @commands.command(name="eval", aliases=["exec"])
     @commands.is_owner()
     async def _eval(self, ctx, *, code):
@@ -199,6 +190,15 @@ class Misc(commands.Cog):
         )
 
         await pager.start(ctx)
+
+    @_eval.error
+    async def eval_error(self, ctx, error):
+        if isinstance(error, commands.NotOwner):
+            text = "You do not have the correct permissions to do that!"
+            await ctx.send(text)
+        elif isinstance(error, commands.MissingRequiredArgument):
+            text = "Please enter the command you would like to execute, Captain Sketch"
+            await ctx.send(text)
 
 
 def setup(bot):

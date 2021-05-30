@@ -94,7 +94,7 @@ class Misc(commands.Cog):
         embed.set_thumbnail(url=user.avatar_url)
         embed.add_field(name="User ID", value=user.id, inline=False)
         embed.add_field(name="Nickname", value=user.display_name, inline=False)
-        embed.add_field(name="Registered", value=user.created_at.strftime(date _format), inline=False)
+        embed.add_field(name="Registered", value=user.created_at.strftime(date_format), inline=False)
         embed.add_field(name="Joined At", value=user.joined_at.strftime(date_format), inline=False)
         if len(user.roles) > 1:
             role_string = " ".join([r.mention for r in user.roles][1:])

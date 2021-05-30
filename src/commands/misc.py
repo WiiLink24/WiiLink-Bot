@@ -2,6 +2,7 @@ import discord
 import io
 import contextlib
 import random
+import requests
 
 import textwrap
 from traceback import format_exception
@@ -16,10 +17,10 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def about(self, message):
-        text = "<:AkkoWink:819398419289210880> About WiiLink24 Bot"
-        embed = discord.Embed(color=0x00FF00)
+
+        embed = discord.Embed(title="<:wiilink:844609429239234640> About WiiLink24 Bot", color=0x00FF00)
         embed.set_thumbnail(url=message.guild.icon_url)
         embed.add_field(name="Created By:", value="SketchMaster2001")
         embed.add_field(
@@ -29,10 +30,12 @@ class Misc(commands.Cog):
         )
         embed.add_field(
             name="More Info",
-            value="It is always broken, is no longer broken.\nPrefix is `/`. This is currently being hosted on my PC so please go easy on the commands.\nWritten in python because JS sucks.",
+            value="A Discord bot for the WiiLink24 Discord server.\nPrefix is `/`."
+                  "It is written 100% in Python, using discord.py.\nIf you need help with the bot, "
+                  "contact SketchMaster2001, or run `/help`.",
             inline=False,
         )
-        await message.channel.send(text, embed=embed)
+        await message.channel.send(embed=embed)
 
     @commands.command(name="avy", aliases=["avatar"])
     async def avatar(self, ctx, *, user: discord.User = None):
@@ -45,16 +48,19 @@ class Misc(commands.Cog):
 
     @commands.command(name="riitag", aliases=["tag"])
     async def riitag(self, ctx, *, username: discord.User = None):
+        # Completely useless, but why not
         if username is None:
             username = ctx.author
         randomizer = generate_random(6)
-        user = username.id
-        em = discord.Embed(color=0x00FF00)
-        em.set_author(name=f"{username}'s RiiTag", icon_url=username.avatar_url)
-        em.set_image(
-            url=f"https://tag.rc24.xyz/{user}/tag.max.png?randomizer=0.{randomizer}"
-        )
-        await ctx.channel.send(embed=em)
+        if requests.get(f"https://tag.rc24.xyz/{username.id}/tag.max.png?randomizer=0.{randomizer}").status_code != 404:
+            em = discord.Embed(color=0x00FF00)
+            em.set_author(name=f"{username}'s RiiTag", icon_url=username.avatar_url)
+            em.set_image(
+                url=f"https://tag.rc24.xyz/{username.id}/tag.max.png?randomizer=0.{randomizer}"
+            )
+            await ctx.send(embed=em)
+        else:
+            await ctx.send(f":x: **{username}** does not have a RiiTag!")
 
     @commands.command()
     async def table(self, ctx):
@@ -68,14 +74,16 @@ class Misc(commands.Cog):
         if username is None:
             username = ctx.author
         randomizer = generate_random(6)
-        user = username.id
-        em = discord.Embed(color=0x00FF00)
-        em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)
-        em.set_image(
-            url=f"https://card-3b2.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}"
-        )
-        await ctx.channel.send(embed=em)
-
+        if requests.get(f"https://card-3b2.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}").status_code != 404:
+            user = username.id
+            em = discord.Embed(color=0x00FF00)
+            em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)
+            em.set_image(
+                url=f"https://card-3b2.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}"
+            )
+            await ctx.channel.send(embed=em)
+        else:
+             await ctx.send(f":x: **{username}** does not have a Digicard!")
 
     @commands.command(pass_context=True)
     async def userinfo(self, ctx, *, user: discord.Member = None):

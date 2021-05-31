@@ -11,13 +11,29 @@ from src.commands.helpers import generate_random, Pag, clean_code
 fmt = "%a, %d %b %Y | %H:%M:%S %ZGMT"
 
 
+class Member(commands.Converter):
+    async def convert(self, ctx, argument):
+        try:
+            member_converter = commands.MemberConverter()
+            member = await member_converter.convert(ctx, argument)
+        except commands.MemberNotFound:
+            member = discord.utils.find(
+                lambda m: m.name.startswith(argument),
+                ctx.guild.members
+            )
+
+        if member is None:
+            raise commands.MemberNotFound(argument)
+
+        return member
+
+
 class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     async def about(self, message):
-
         embed = discord.Embed(title="<:wiilink:844609429239234640> About WiiLink24 Bot", color=0x00FF00)
         embed.set_thumbnail(url=message.guild.icon_url)
         embed.add_field(name="Created By:", value="SketchMaster2001")
@@ -36,7 +52,7 @@ class Misc(commands.Cog):
         await message.channel.send(embed=embed)
 
     @commands.command(name="avy", aliases=["avatar"])
-    async def avatar(self, ctx, *, user: discord.User = None):
+    async def avatar(self, ctx, *, user: Member = None):
         if user is None:
             user = ctx.author
         embed = discord.Embed(color=0x00FF00)
@@ -45,7 +61,7 @@ class Misc(commands.Cog):
         await ctx.channel.send(embed=embed)
 
     @commands.command(name="riitag", aliases=["tag"])
-    async def riitag(self, ctx, *, username: discord.User = None):
+    async def riitag(self, ctx, *, username: Member = None):
         # Completely useless, but why not
         if username is None:
             username = ctx.author
@@ -69,7 +85,7 @@ class Misc(commands.Cog):
         await ctx.channel.send(embed=embed)
 
     @commands.command(name="digicard", aliases=["card"])
-    async def digicard(self, ctx, *, username: discord.Member = None):
+    async def digicard(self, ctx, *, username: Member = None):
         if username is None:
             username = ctx.author
         randomizer = generate_random(6)
@@ -85,7 +101,7 @@ class Misc(commands.Cog):
             await ctx.send(f":x: **{username}** does not have a Digicard!")
 
     @commands.command(pass_context=True)
-    async def userinfo(self, ctx, *, user: discord.Member = None):
+    async def userinfo(self, ctx, *, user: Member = None):
         if user is None:
             user = ctx.author
         date_format = "%a, %d %b %Y %I:%M %p"

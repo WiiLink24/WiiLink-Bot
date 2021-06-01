@@ -15,7 +15,6 @@ bot.load_extension("src.commands.misc")
 bot.load_extension("src.commands.mod")
 bot.load_extension("src.commands.events")
 bot.load_extension("src.commands.converters")
-
-
+bot.load_extension("src.commands.afk")
 
 bot.run(TOKEN)

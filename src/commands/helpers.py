@@ -1,6 +1,5 @@
 import random
 import string
-import asyncio
 
 import discord
 from discord.ext.buttons import Paginator

@@ -1,5 +1,5 @@
 import sqlalchemy as db
-from src.commands.connect_db import Base
+from src.commands.database import Base
 
 
 class UserInfo(Base):

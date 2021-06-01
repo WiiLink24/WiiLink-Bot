@@ -164,7 +164,7 @@ class Misc(commands.Cog):
             value=f":white_small_square: ID: **{message.guild.id}** \n:white_small_square: Owner: **{message.guild.owner}** \n:white_small_square: Location: **{message.guild.region}** \n:white_small_square: Creation: **{message.guild.created_at.strftime(fmt)}** \n:white_small_square: Members: **{message.guild.member_count}** \n:white_small_square: Channels: **{channels}** Channels; **{text_channels}** Text, **{voice_channels}** Voice, **{categories}** Categories \n:white_small_square: Verification: **{str(message.guild.verification_level).upper()}** \n:white_small_square: Features: {', '.join(f'**{x}**' for x in message.guild.features)}",
         )
         embed.set_image(
-            url=f"https://cdn.discordapp.com/splashes/750581992223146074/{message.guild.splash}.jpg"
+            url=f"https://cdn.discordapp.com/splashes/750581992223146074/{message.guild.splash}.jpg?size=1024"
         )
         await message.channel.send(title, embed=embed)
 
@@ -219,3 +219,4 @@ class Misc(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Misc(bot))
+

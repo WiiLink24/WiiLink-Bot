@@ -39,14 +39,19 @@ class Misc(commands.Cog):
             await ctx.send("Please enter a real CMOC Entry Number.")
         else:
             global data
-            link = requests.get(f"https://miicontestp.wii.rc24.xyz/cgi-bin/htmlsearch.cgi?query={entry_number}").text
-            bs = BeautifulSoup(link, "html.parser")
+            link = requests.get(f"https://miicontestp.wii.rc24.xyz/cgi-bin/htmlsearch.cgi?query={entry_number}")
+            bs = BeautifulSoup(link.text, "html.parser")
             for file in bs.find("a"):
                 data = file.get("src")
 
             embed = discord.Embed(title="The Mii you wanted", color=0x00FF00)
             embed.set_image(url=f"{data}")
             await ctx.send(embed=embed)
+
+    @mii.error
+    async def mii_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Please send CMOC Entry Number. Get one from https://miicontestp.wii.rc24.xyz")
 
     @commands.command()
     async def about(self, message):

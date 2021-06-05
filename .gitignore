@@ -2,6 +2,7 @@
 .idea
 # I have my db creds in this file, so i will ignore this
 src/commands/database.py
+.env
 # venv stuff
 bin
 lib

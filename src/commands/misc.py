@@ -6,6 +6,7 @@ import requests
 import textwrap
 from traceback import format_exception
 from discord.ext import commands
+from bs4 import BeautifulSoup
 from src.commands.helpers import generate_random, Pag, clean_code
 
 fmt = "%a, %d %b %Y | %H:%M:%S %ZGMT"
@@ -31,6 +32,21 @@ class Member(commands.Converter):
 class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command()
+    async def mii(self, ctx, entry_number):
+        if len(entry_number) >= 15 or len(entry_number) <= 13:
+            await ctx.send("Please enter a real CMOC Entry Number.")
+        else:
+            global data
+            link = requests.get(f"https://miicontestp.wii.rc24.xyz/cgi-bin/htmlsearch.cgi?query={entry_number}").text
+            bs = BeautifulSoup(link, "html.parser")
+            for file in bs.find("a"):
+                data = file.get("src")
+
+            embed = discord.Embed(title="The Mii you wanted", color=0x00FF00)
+            embed.set_image(url=f"{data}")
+            await ctx.send(embed=embed)
 
     @commands.command()
     async def about(self, message):

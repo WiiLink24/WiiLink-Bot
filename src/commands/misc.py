@@ -39,19 +39,34 @@ class Misc(commands.Cog):
             await ctx.send("Please enter a real CMOC Entry Number.")
         else:
             global data
-            link = requests.get(f"https://miicontestp.wii.rc24.xyz/cgi-bin/htmlsearch.cgi?query={entry_number}")
-            bs = BeautifulSoup(link.text, "html.parser")
+            table = []
+            # Get Mii picture
+            link = requests.get(f"https://miicontestp.wii.rc24.xyz/cgi-bin/htmlsearch.cgi?query={entry_number}").text
+            bs = BeautifulSoup(link, "html.parser")
             for file in bs.find("a"):
                 data = file.get("src")
-
-            embed = discord.Embed(title="The Mii you wanted", color=0x00FF00)
+            # Get Mii Artisan and nickname
+            for child in bs.find("table").children:
+                for td in child:
+                    table.append(
+                        td
+                    )
+            k, w = str(table[18]).split(">", 1)
+            k, w = w.split("<", 1)
+            a, b = str(table[26]).split('">', 1)
+            a, b = b.split('<', 1)
+            embed = discord.Embed(title=k, color=0x00FF00)
             embed.set_image(url=f"{data}")
+            embed.set_footer(text=f"Created by: {a}", icon_url="https://cdn.discordapp.com/emojis/420052317690396673.png?v=1")
             await ctx.send(embed=embed)
 
     @mii.error
     async def mii_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("Please send CMOC Entry Number. Get one from https://miicontestp.wii.rc24.xyz")
+            await ctx.send("Please enter a CMOC Entry Number.")
+        # If someone decides to use quotes and not close them
+        if isinstance(error, commands.InvalidEndOfQuotedStringError):
+            await ctx.send("Please enter a real CMOC Entry Number.")
 
     @commands.command()
     async def about(self, message):

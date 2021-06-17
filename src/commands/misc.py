@@ -87,6 +87,18 @@ class Misc(commands.Cog):
         )
         await message.channel.send(embed=embed)
 
+    @commands.command()
+    async def credits(self, ctx):
+        embed = discord.Embed(title="Credits", description="All the people who deserve to be credited for the existence of this bot.", colour=0x00FF00)
+        embed.set_author(name="WiiLink24 Bot", icon_url=self.bot.user.avatar_url)
+        embed.add_field(name="People", value="""
+        <@239809536012058625>: Giving me the opportunity to be a developer as well as hosting the bot on cacti\n
+        Stack Overflow: If it weren't for the people who use this site, half my bot would be non-existent\n
+        discord.py: API wrapper for discord, in python\n
+        <@667563245107937297>: Creator and developer of WiiLink24 Bot
+        """, inline=False)
+        await ctx.send(embed=embed)
+
     @commands.command(name="avy", aliases=["avatar"])
     async def avatar(self, ctx, *, user: Member = None):
         if user is None:

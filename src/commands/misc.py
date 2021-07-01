@@ -138,7 +138,7 @@ class Misc(commands.Cog):
         if username is None:
             username = ctx.author
         randomizer = generate_random(6)
-        if requests.get(f"https://card-3b2.wiilink24.com/cards/{username.id}.jpg?randomizer=0.{randomizer}").status_code != 404:
+        if requests.get(f"https://card.wiilink24.com/cards/{username.id}.jpg?randomizer=0.{randomizer}").status_code != 404:
             user = username.id
             em = discord.Embed(color=0x00FF00)
             em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)

@@ -1,5 +1,6 @@
 from discord.ext import commands
-from src.commands.helpers import timestamp
+import requests
+from src.commands.helpers import timestamp, generate_random
 
 import discord
 
@@ -7,6 +8,22 @@ import discord
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(name="digicard", aliases=["card"])
+    async def digicard(self, ctx, *, username: discord.Member = None):
+        if username is None:
+            username = ctx.author
+        randomizer = generate_random(6)
+        if requests.get(f"https://card.wiilink24.com/cards/{username.id}.jpg?randomizer=0.{randomizer}").status_code != 404:
+            user = username.id
+            em = discord.Embed(color=0x00FF00)
+            em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)
+            em.set_image(
+                url=f"https://card.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}"
+            )
+            await ctx.channel.send(embed=em)
+        else:
+            await ctx.send(f":x: **{username}** does not have a Digicard!")
 
     @commands.Cog.listener()
     async def on_ready(self):

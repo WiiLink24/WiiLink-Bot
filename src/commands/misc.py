@@ -133,22 +133,6 @@ class Misc(commands.Cog):
         embed.set_image(url="https://cdn.discordapp.com/attachments/750623609810190348/842808566003793940/NEWTables.png")
         await ctx.channel.send(embed=embed)
 
-    @commands.command(name="digicard", aliases=["card"])
-    async def digicard(self, ctx, *, username: Member = None):
-        if username is None:
-            username = ctx.author
-        randomizer = generate_random(6)
-        if requests.get(f"https://card.wiilink24.com/cards/{username.id}.jpg?randomizer=0.{randomizer}").status_code != 404:
-            user = username.id
-            em = discord.Embed(color=0x00FF00)
-            em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)
-            em.set_image(
-                url=f"https://card.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}"
-            )
-            await ctx.channel.send(embed=em)
-        else:
-            await ctx.send(f":x: **{username}** does not have a Digicard!")
-
     @commands.command(pass_context=True)
     async def userinfo(self, ctx, *, user: Member = None):
         if user is None:

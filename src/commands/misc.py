@@ -2,6 +2,7 @@ import discord
 import io
 import contextlib
 import requests
+import subprocess
 
 import textwrap
 from traceback import format_exception
@@ -142,7 +143,7 @@ class Misc(commands.Cog):
             em = discord.Embed(color=0x00FF00)
             em.set_author(name=f"{username}'s Digicard", icon_url=username.avatar_url)
             em.set_image(
-                url=f"https://card-3b2.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}"
+                url=f"https://card.wiilink24.com/cards/{user}.jpg?randomizer=0.{randomizer}"
             )
             await ctx.channel.send(embed=em)
         else:
@@ -230,6 +231,7 @@ class Misc(commands.Cog):
             "author": ctx.author,
             "guild": ctx.guild,
             "message": ctx.message,
+            "subprocess": subprocess
         }
 
         stdout = io.StringIO()

@@ -18,6 +18,5 @@ bot.load_extension("src.commands.converters")
 bot.load_extension("src.commands.gametdb")
 bot.load_extension("src.commands.modmail")
 bot.load_extension("src.commands.afk")
-bot.load_extension("src.commands.digicard")
 
 bot.run(TOKEN)

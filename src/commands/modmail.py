@@ -13,16 +13,21 @@ class ModMail(commands.Cog):
         if not message.author.bot:
             if str(message.channel.type) == "private":
                 member = self.bot.get_user(int(message.author.id))
+                guild = self.bot.get_guild(750581992223146074)
                 create_dm = await member.create_dm()
-                modmail_channel = discord.utils.get(self.bot.get_all_channels(), name="mod-mail")
-                embed = discord.Embed(colour=0x00FF00)
-                embed.set_author(name=f"{message.author.display_name} #{message.author.discriminator} (ID: {message.author.id})", icon_url=message.author.avatar_url)
-                embed.add_field(name="Mail Received", value=message.content, inline=False)
-                embed.set_footer(text=f"Submitted • {message.created_at.strftime(fmt)}")
-                await modmail_channel.send(embed=embed)
-                await create_dm.send("Message sent to staff.")
+                if guild.get_member(message.author.id) is not None:
+                    modmail_channel = discord.utils.get(self.bot.get_all_channels(), name="mod-mail")
+                    embed = discord.Embed(colour=0x00FF00)
+                    embed.set_author(name=f"{message.author.display_name} #{message.author.discriminator} (ID: {message.author.id})", icon_url=message.author.avatar_url)
+                    embed.add_field(name="Mail Received", value=message.content, inline=False)
+                    embed.set_footer(text=f"Submitted • {message.created_at.strftime(fmt)}")
+                    await modmail_channel.send(embed=embed)
+                    await create_dm.send("Message sent to staff.")
+                else:
+                    await create_dm.send("You cannot use Mod Mail as you are not in the WiiLink server.")
 
     @commands.command()
+    @commands.has_permissions(ban_members=True)
     async def modreply(self, ctx, user_id, *, reply_msg):
         member = self.bot.get_user(int(user_id))
         create_dm = await member.create_dm()

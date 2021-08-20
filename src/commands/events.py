@@ -3,6 +3,8 @@ from src.commands.helpers import timestamp
 
 import discord
 
+SERVER_LOG = 755522585864962099
+
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -20,23 +22,23 @@ class Events(commands.Cog):
             text = f"{timestamp} :x: **{user}** (ID: {user.id})'s message has been deleted from <#{message.channel.id}>:"
             embed = discord.Embed(color=0xFF0000)
             embed.add_field(name="Deleted Message:", value=message.content, inline=True)
-            channel = self.bot.get_channel(755522585864962099)
+            channel = self.bot.get_channel(SERVER_LOG)
             await channel.send(text, embed=embed)
 
     @commands.Cog.listener()
     async def on_message_edit(self, message_before, message_after):
-        if type(message_before) is not discord.message.Embed:
+        if type(message_before) is not discord.message.Embed and not message_before.author.bot:
             text = f"{timestamp} :warning: **{message_before.author}** (ID: {message_before.author.id}) edited a " \
                    f"message in <#{message_before.channel.id}>:"
             embed = discord.Embed(color=0xFFFF00)
             embed.add_field(name="From:", value=message_before.content, inline=False)
             embed.add_field(name="\nTo:", value=message_after.content, inline=False)
-            channel = self.bot.get_channel(755522585864962099)
+            channel = self.bot.get_channel(SERVER_LOG)
             await channel.send(text, embed=embed)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        channel = self.bot.get_channel(755522585864962099)
+        channel = self.bot.get_channel(SERVER_LOG)
         text = f"{timestamp} :inbox_tray: **{member}** (ID:{member.id}) joined the server.\n" \
                f"Creation: {member.created_at}"
         await channel.send(text)
@@ -45,7 +47,7 @@ class Events(commands.Cog):
     async def on_member_remove(self, member: discord.Member):
         text = f"{timestamp} :outbox_tray: **{member}** (ID:{member.id}) has been kicked or left the server.\n" \
                f"Creation: {member.created_at}"
-        channel = self.bot.get_channel(755522585864962099)
+        channel = self.bot.get_channel(SERVER_LOG)
         await channel.send(text)
 
 

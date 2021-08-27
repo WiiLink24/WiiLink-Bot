@@ -8,3 +8,4 @@ buttons
 lxml
 requests~=2.25.1
 bs4
+google-cloud-vision

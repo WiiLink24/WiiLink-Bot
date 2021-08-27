@@ -20,5 +20,6 @@ bot.load_extension("src.commands.converters")
 bot.load_extension("src.commands.modmail")
 bot.load_extension("src.commands.afk")
 bot.load_extension("src.commands.music")
+bot.load_extension("src.commands.ocr")
 
 bot.run(TOKEN)

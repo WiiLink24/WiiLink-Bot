@@ -1,6 +1,7 @@
 from discord.ext import commands
 from google.cloud import vision
 import discord
+import os
 
 
 class OCR(commands.Cog):
@@ -8,13 +9,25 @@ class OCR(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def ocr(self, ctx, image_url):
+    async def ocr(self, ctx, image_url=None):
+        global image
         text_list = ""
         final_text = ""
+
         client = vision.ImageAnnotatorClient()
-        image = vision.Image()
-        # TODO: Allow for images without URL
-        image.source.image_uri = image_url
+
+        if image_url is None:
+            # Save supplied image
+            await ctx.message.attachments[0].save("./ocr.jpg")
+            with open("./ocr.jpg", "rb") as f:
+                content = f.read()
+
+            image = vision.Image(content=content)
+            # Now that we have the image's bytes, we can safely delete.
+            os.remove("./ocr.jpg")
+        else:
+            image = vision.Image()
+            image.source.image_uri = image_url
 
         response = client.text_detection(image=image)
         texts = response.text_annotations

@@ -2,6 +2,7 @@ package com.wiilink24.bot.commands.misc;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.wiilink24.bot.commands.Categories;
 import com.wiilink24.bot.utils.SearcherUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,6 +17,9 @@ import net.dv8tion.jda.api.entities.User;
 public class Avatar extends Command {
     public Avatar() {
         this.name = "avatar";
+        this.category = Categories.MISC;
+        this.arguments = "Optional - [username]";
+        this.help = "Displays your avatar or the specified users.";
         this.aliases = new String[]{"avy"};
     }
 

@@ -24,7 +24,7 @@ public class Credits extends Command {
                 .setColor(0x00FF00)
                 .setTitle("Credits", null)
                 .setAuthor("WiiLink Bot", null, event.getSelfUser().getAvatarUrl())
-                .addField("People", "<@239809536012058625>: Giving me the opportunity to be a developer as well as hosting the bot on cacti\n<@667563245107937297>: Creator and developer of WiiLink24 Bot\nJDA: Discord API wrapper made in Java\n", false);
+                .addField("People", "<@239809536012058625>: Giving me the opportunity to be a developer as well as hosting the bot on cacti\n<@667563245107937297>: Creator and developer of WiiLink24 Bot\nJDA: Discord API wrapper made in Java\njagrosh: I used the MessageCache from Vortex,\n", false);
 
         event.reply(embed.build());
     }

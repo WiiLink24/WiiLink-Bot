@@ -9,6 +9,7 @@ import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageSource;
+import com.wiilink24.bot.commands.Categories;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -16,10 +17,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command that pulls text from images.
+ * The main use is for WiiLink Translators.
+ *
+ * @author Sketch
+ */
 
 public class OCR extends Command {
     public OCR() {
-        this.name = "OCR";
+        this.name = "ocr";
+        this.arguments = "[url]";
+        this.category = Categories.MISC;
+        this.help = "Grabs text from the specified image url.";
     }
 
     @Override

@@ -15,17 +15,6 @@ public class Config {
         return getString("DISCORD_TOKEN");
     }
 
-    // For the OCR
-    public String getGoogleAuth() {
-        String OCR = getString("USE_OCR");
-
-        if (Objects.equals(OCR, "true")) {
-            OCR = getString("GOOGLE_APPLICATION_CREDENTIALS");
-        }
-
-        return OCR;
-    }
-
     public String[] getDatabaseCreds() {
         String user = getString("DB_USER");
         String password = getString("DB_PASS");

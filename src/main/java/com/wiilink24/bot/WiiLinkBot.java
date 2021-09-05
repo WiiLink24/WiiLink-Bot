@@ -10,7 +10,8 @@ import javax.security.auth.login.LoginException;
 
 public class WiiLinkBot {
     public static void main(String[] args) throws LoginException {
-        System.out.println("Starting WiiLink Bot");
+        System.out.println("Starting WiiLink Bot...");
+        System.out.println("Started!");
 
         new Bot().run();
     }

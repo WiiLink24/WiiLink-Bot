@@ -2,15 +2,23 @@ package com.wiilink24.bot.commands.misc;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.wiilink24.bot.commands.Categories;
 import com.wiilink24.bot.utils.SearcherUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * User Info command
+ *
+ * @author Sketch
+ */
+
 public class Userinfo extends Command {
     public Userinfo() {
         this.name = "userinfo";
+        this.category = Categories.MISC;
         this.help = "Get information for a user";
         this.arguments = "[user]";
 

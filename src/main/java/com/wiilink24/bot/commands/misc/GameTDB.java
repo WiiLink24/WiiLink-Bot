@@ -27,6 +27,8 @@ public class GameTDB extends Command {
     public GameTDB() {
         this.name = "gametdb";
         this.category = Categories.MISC;
+        this.arguments = "[console] [titleID]";
+        this.help = "Grabs game data from the GameTDB website. Enter the console and titleID to get started.";
         this.httpClient = new OkHttpClient();
     }
 

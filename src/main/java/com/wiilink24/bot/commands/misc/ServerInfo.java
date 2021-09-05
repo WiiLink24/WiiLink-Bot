@@ -10,10 +10,17 @@ import net.dv8tion.jda.api.requests.RestAction;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Server info command
+ *
+ * @author Sketch
+ */
+
 public class ServerInfo extends Command {
     public ServerInfo() {
         this.name = "serverinfo";
         this.category = Categories.MISC;
+        this.help = "Display's the servers info";
     }
 
     @Override

@@ -3,11 +3,19 @@ package com.wiilink24.bot.commands.moderation;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.wiilink24.bot.Bot;
+import com.wiilink24.bot.commands.Categories;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 
 import java.util.List;
+
+/**
+ * Clear command
+ *
+ * @author Sketch
+ */
 
 public class Clear extends Command {
     private final String modLog;
@@ -15,6 +23,8 @@ public class Clear extends Command {
     public Clear(Bot bot) {
         this.modLog = bot.modLog();
         this.name = "clear";
+        this.category = Categories.MODERATION;
+        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 
     @Override

@@ -102,8 +102,7 @@ public class Listener implements EventListener {
 
                         // Now DM the member telling them that the AFK status is removed
                         user.openPrivateChannel()
-                                .flatMap(channel -> channel.sendMessage("Your AFK status has been removed."))
-                                .complete();
+                                .flatMap(privateChannel -> privateChannel.sendMessage("Your AFK status has been removed.")).complete();
                     }
                 }
 

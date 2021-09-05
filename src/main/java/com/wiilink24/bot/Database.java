@@ -33,4 +33,12 @@ public class Database {
 
         return query.executeQuery();
     }
+
+    public void updateStrike(Connection con, String userID, Integer strikes) throws SQLException {
+        PreparedStatement pst = con.prepareStatement("UPDATE userinfo SET strikes = ? WHERE userid = ?");
+
+        pst.setInt(1, strikes);
+        pst.setObject(2, userID);
+        pst.executeUpdate();
+    }
 }

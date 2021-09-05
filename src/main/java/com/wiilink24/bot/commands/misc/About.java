@@ -21,7 +21,7 @@ public class About extends Command {
     @Override
     protected void execute(CommandEvent event) {
         EmbedBuilder embed = new EmbedBuilder()
-                .setTitle("<:wiilink:844609429239234640> About WiiLink24 Bot")
+                .setTitle("<:wiilink:844609429239234640> About WiiLink Bot")
                 .setColor(0x00FF00)
                 .setThumbnail(event.getGuild().getIconUrl())
                 .addField("Created by:", "SketchMaster2001", false)

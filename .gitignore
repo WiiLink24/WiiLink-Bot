@@ -1,9 +1,5 @@
-# JetBrains IDE's have this file
 .idea
-# I have my db creds in this file, so i will ignore this
-.env
-# venv stuff
-bin
-lib
-include
-pyvenv.cfg
+.DS_Store
+*.class
+*.log
+*.jar

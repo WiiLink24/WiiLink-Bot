@@ -13,8 +13,16 @@ jobs:
         java-version: 16
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    # https://github.com/actions/cache/blob/master/examples.md#java---maven
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Upload built JAR
       uses: actions/upload-artifact@master
       with:
         name: WiiLink-Bot.jar
-        path: WiiLink-Bot.jar
+        path: target/WiiLink-Bot.jar

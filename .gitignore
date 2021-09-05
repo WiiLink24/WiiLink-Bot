@@ -3,3 +3,5 @@
 *.class
 *.log
 *.jar
+target/
+dependency-reduced-pom.xml

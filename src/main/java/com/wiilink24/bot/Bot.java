@@ -49,6 +49,7 @@ public class Bot {
 
                         /* Moderation Commands */
                         new Clear(this),
+                        new Check(this),
                         new Ban(),
                         new Kick(this),
                         new Mute(this),

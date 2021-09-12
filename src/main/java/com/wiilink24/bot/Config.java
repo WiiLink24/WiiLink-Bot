@@ -2,8 +2,6 @@ package com.wiilink24.bot;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.util.Objects;
-
 public class Config {
     Dotenv dotenv = Dotenv.load();
 
@@ -23,5 +21,9 @@ public class Config {
         String database = "jdbc:postgresql://localhost:5432/" + getString("DB_NAME");
 
         return new String[]{user, password, database};
+    }
+
+    public String getDeeplCreds() {
+        return getString("DEEPL_TOKEN");
     }
 }

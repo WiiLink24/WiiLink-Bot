@@ -31,7 +31,7 @@ public class Bot {
         );
         
         CommandClientBuilder client = new CommandClientBuilder()
-                .setPrefix("/")
+                .setPrefix("+")
                 .setOwnerId("829487301422743613")
                 .addCommands(
                         /* Misc Commands */
@@ -49,8 +49,9 @@ public class Bot {
 
                         /* Moderation Commands */
                         new Clear(this),
-                        new Check(this),
                         new Ban(),
+                        new Check(this),
+                        new Translate(this),
                         new Kick(this),
                         new Mute(this),
                         new Unban(),
@@ -94,4 +95,6 @@ public class Bot {
     public String db() {
         return config.getDatabaseCreds()[2];
     }
+
+    public String deepl() {return config.getDeeplCreds();}
 }

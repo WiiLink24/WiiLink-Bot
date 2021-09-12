@@ -31,7 +31,7 @@ public class Bot {
         );
         
         CommandClientBuilder client = new CommandClientBuilder()
-                .setPrefix("+")
+                .setPrefix("/")
                 .setOwnerId("829487301422743613")
                 .addCommands(
                         /* Misc Commands */

@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 public class Translate extends Command {
     private final Bot bot;
@@ -39,30 +40,34 @@ public class Translate extends Command {
     protected void execute(CommandEvent event) {
         event.async(() -> {
             // Hashtable of all the languages DeepL supports
-            Hashtable<String, String> langTable = new Hashtable<>();
-            langTable.put("bulgarian", "BG");
-            langTable.put("czech", "CZ");
-            langTable.put("danish", "DA");
-            langTable.put("german", "DE");
-            langTable.put("greek", "EL");
-            langTable.put("spanish", "ES");
-            langTable.put("estonian", "ET");
-            langTable.put("finnish", "FI");
-            langTable.put("french", "FR");
-            langTable.put("hungarian", "HU");
-            langTable.put("italian", "IT");
-            langTable.put("japanese", "JA");
-            langTable.put("lithuanian", "LT");
-            langTable.put("latvian", "LV");
-            langTable.put("dutch", "NL");
-            langTable.put("polish", "PL");
-            langTable.put("portuguese", "PT");
-            langTable.put("romanian", "RO");
-            langTable.put("russian", "RU");
-            langTable.put("slovak", "SK");
-            langTable.put("slovenian", "SL");
-            langTable.put("swedish", "SV");
-            langTable.put("chinese", "ZH");
+            Hashtable<String, String> langTable = new Hashtable<>(
+                    Map.ofEntries(
+                            Map.entry("bulgarian", "BG"),
+                            Map.entry("czech", "CZ"),
+                            Map.entry("english", "EN"),
+                            Map.entry("danish", "DA"),
+                            Map.entry("german", "DE"),
+                            Map.entry("greek", "EL"),
+                            Map.entry("spanish", "ES"),
+                            Map.entry("estonian", "ET"),
+                            Map.entry("finnish", "FI"),
+                            Map.entry("french", "FR"),
+                            Map.entry("hungarian", "HU"),
+                            Map.entry("italian", "IT"),
+                            Map.entry("japanese", "JA"),
+                            Map.entry("lithuanian", "LT"),
+                            Map.entry("latvian", "LV"),
+                            Map.entry("dutch", "NL"),
+                            Map.entry("polish", "PL"),
+                            Map.entry("portuguese", "PT"),
+                            Map.entry("romanian", "RO"),
+                            Map.entry("russian", "RU"),
+                            Map.entry("slovak", "SK"),
+                            Map.entry("slovenian", "SL"),
+                            Map.entry("swedish", "SV"),
+                            Map.entry("chinese", "ZH")
+                    )
+            );
 
             String[] args = event.getArgs().split("\\s", 2);
             HttpClient httpClient = HttpClients.createDefault();

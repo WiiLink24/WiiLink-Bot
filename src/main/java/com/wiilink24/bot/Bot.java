@@ -39,6 +39,7 @@ public class Bot {
                         new About(),
                         new Avatar(),
                         new Credits(),
+                        new Digicard(),
                         new GameTDB(),
                         new Mii(),
                         new RiiTag(),

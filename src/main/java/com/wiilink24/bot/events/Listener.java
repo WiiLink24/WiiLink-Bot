@@ -116,9 +116,11 @@ public class Listener implements EventListener {
             MessageCache.CachedMessage message = this.cache.pullMessage(delete.getGuild(), delete.getMessageIdLong());
 
             if (message != null) {
+                String oldMessage = message.getContentRaw() + "\n";
+                oldMessage = message.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(oldMessage, String::concat);
                 EmbedBuilder embed = new EmbedBuilder()
                         .setColor(Color.RED)
-                        .setDescription(message.getContentRaw());
+                        .setDescription(oldMessage);
 
                 String topMessage = timestamp
                         + " :x: **"
@@ -141,10 +143,16 @@ public class Listener implements EventListener {
                 MessageCache.CachedMessage old = this.cache.putMessage(message);
 
                 if (old != null) {
+                    String oldMessage = old.getContentRaw() + "\n";
+                    oldMessage = old.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(oldMessage, String::concat);
+
+                    String newMessage = message.getContentRaw() + "\n";
+                    newMessage = message.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(newMessage, String::concat);
+
                     EmbedBuilder embed = new EmbedBuilder()
                             .setColor(Color.YELLOW)
-                            .addField("From: ", old.getContentRaw(), false)
-                            .addField("To: ", message.getContentRaw(), false);
+                            .addField("From: ", oldMessage, false)
+                            .addField("To: ", newMessage, false);
 
                     String topMessage = timestamp
                             + " :warning: **"

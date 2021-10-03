@@ -3,6 +3,7 @@ package com.wiilink24.bot;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.wiilink24.bot.commands.misc.*;
 import com.wiilink24.bot.commands.moderation.*;
+import com.wiilink24.bot.commands.testing.UploadWad;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -58,6 +59,9 @@ public class Bot {
                         new Unban(),
                         new Strike(this),
 
+                        /* Developer commands */
+                        new UploadWad(this),
+
                         /* Owner Only Commands */
                         new Bash(),
                         new Eval(this)
@@ -79,6 +83,18 @@ public class Bot {
 
     public String modLog() {
         return "755522585864962099";
+    }
+
+    public String patchesChannel() {
+        return "894316256788893706";
+    }
+
+    public static String developerRoleId() {
+        return "750591972044963850";
+    }
+
+    public static String testerRoleId() {
+        return "751858257307631697";
     }
 
     public String timestamp() {

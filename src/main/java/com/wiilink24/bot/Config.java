@@ -26,4 +26,8 @@ public class Config {
     public String getDeeplCreds() {
         return getString("DEEPL_TOKEN");
     }
+
+    public String getWadsDirectory() {
+        return getString("WADS_DIR");
+    }
 }

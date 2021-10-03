@@ -80,13 +80,11 @@
             <name>bintray</name>
             <url>https://jcenter.bintray.com</url>
         </repository>
-
         <repository>
             <id>dv8tion</id>
             <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
-
         <repository>
             <id>bintray-jagrosh-maven</id>
             <name>bintray</name>
@@ -104,7 +102,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.3.0_277</version>
+            <version>4.3.0_333</version>
         </dependency>
 
         <dependency>
@@ -117,7 +115,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.14.2</version>
+            <version>1.14.3</version>
         </dependency>
 
         <!-- .env library -->
@@ -136,19 +134,19 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>5.1.2</version>
+            <version>5.2.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
-            <version>3.0.8</version>
+            <version>3.0.9</version>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.23.jre7</version>
+            <version>42.2.24.jre7</version>
         </dependency>
     </dependencies>
 </project>

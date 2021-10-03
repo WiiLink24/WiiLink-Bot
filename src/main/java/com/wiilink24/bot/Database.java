@@ -41,4 +41,27 @@ public class Database {
         pst.setObject(2, userID);
         pst.executeUpdate();
     }
+
+    /**
+     * Inserts a WAD into the database.
+     *
+     * @param con A connection usable to comple the request.
+     * @param filename The filename of the WAD on disk, usable once retrieved later.
+     * @param title The title to use when referring to this WAD, such as "Beta v13".
+     * @return The ID of the inserted WAD, usable for interaction callbacks.
+     * @throws SQLException Should the execution fail.
+     */
+    public int insertWad(Connection con, String filename, String title) throws SQLException {
+        PreparedStatement pst = con.prepareStatement("INSERT INTO wads (filename, readable_name) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+        pst.setString(1, filename);
+        pst.setString(2, title);
+        pst.executeUpdate();
+
+        ResultSet keys = pst.getGeneratedKeys();
+        if (keys.next()) {
+            return keys.getInt(1);
+        } else {
+            return 0;
+        }
+    }
 }

@@ -73,24 +73,28 @@ public class UploadWad extends Command {
                     // This is an argument to add to a type's string.
                     switch (current) {
                         case FILENAME -> {
-                            filename += argument;
+                            filename += argument + " ";
                         }
 
                         case TITLE -> {
-                            title += argument;
+                            title += argument + " ";
                         }
 
                         case DESCRIPTION -> {
-                            description += argument;
+                            description += argument + " ";
                         }
                     }
             }
         }
 
+        // Sanitize names
+        filename = filename.trim();
+        title = title.trim();
+        description = description.trim();
+
         int interactionId;
         try {
             interactionId = database.insertWad(filename, title);
-            event.reply("ID: " + interactionId);
         } catch (SQLException e) {
             event.replyError("Unable to insert WAD to database.");
             Sentry.captureException(e);
@@ -109,6 +113,7 @@ public class UploadWad extends Command {
                         Button.success("patchdl_" + interactionId, "Download")
                 )
                 .queue();
+        event.reactSuccess();
     }
 }
 

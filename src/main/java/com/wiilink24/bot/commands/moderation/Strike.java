@@ -44,6 +44,7 @@ public class Strike extends Command {
         try {
             String[] args = event.getArgs().split("\\s", 3);
             String strikeReason;
+            int strikeCount;
             String message;
             Role mutedRole = event.getGuild().getRoleById("770836633419120650");
             User user = event.getGuild().retrieveMemberById(args[0]).complete().getUser();
@@ -51,8 +52,10 @@ public class Strike extends Command {
             // Build strike reason
             if (args.length == 1) {
                 strikeReason = "No reason provided";
+                strikeCount = 1;
             } else {
                 strikeReason = args[2];
+                strikeCount = Integer.parseInt(args[1]);
             }
 
             boolean exists = database.doesExist(user.getId());
@@ -62,19 +65,13 @@ public class Strike extends Command {
             }
 
             // Query to see how many strikes the user has before our new strikes
-            ResultSet result = database.fullQuery(user.getId());
-            int strikes = 0;
-            int oldStrikes = 0;
+            int oldStrikes = database.getStrikes(user.getId());
+            int strikes = oldStrikes + strikeCount;
 
-            while (result.next()) {
-                oldStrikes = result.getInt(2);
-                strikes = oldStrikes + Integer.parseInt(args[1]);
-            }
-
-            event.reply("Successfully gave " + args[1] + " to **" + user.getName() + "**#" + user.getDiscriminator());
+            event.reply("Successfully gave " + strikeCount + " to **" + user.getName() + "**#" + user.getDiscriminator());
             // Now we can strike them and send the user a DM
             database.updateStrike(user.getId(), strikes);
-            bot.sendDM(user, "You were given " + args[1] + " strikes in WiiLink for `" + strikeReason + "`").queue();
+            bot.sendDM(user, "You were given " + strikeCount + " strikes in WiiLink for `" + strikeReason + "`").queue();
             event.getJDA().getTextChannelById(bot.modLog()).sendMessage(
                     timestamp
                     + " :triangular_flag_on_post: **"

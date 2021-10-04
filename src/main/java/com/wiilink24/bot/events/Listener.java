@@ -1,5 +1,6 @@
 package com.wiilink24.bot.events;
 
+import com.wiilink24.bot.utils.AFKStatus;
 import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import com.wiilink24.bot.utils.MessageCache;
@@ -58,13 +59,11 @@ public class Listener implements EventListener {
                         User user = queried_member.getUser();
 
                         // Query to see if the user exists and grab AFK status
-                        ResultSet result = database.fullQuery(user.getId());
-
-                        if (result.first()) {
-                            if (result.getBoolean(3)) {
+                        AFKStatus status = database.getAFKStatus(user.getId());
+                            if (status.isAFK) {
                                 EmbedBuilder embed = new EmbedBuilder()
                                         .setAuthor(user.getName() + " is AFK", null, user.getEffectiveAvatarUrl())
-                                        .addField("Reason:", result.getString(4), false);
+                                        .addField("Reason:", status.reason, false);
 
                                 message.getChannel().sendMessageEmbeds(embed.build()).queue();
 
@@ -77,7 +76,7 @@ public class Listener implements EventListener {
                                 user.openPrivateChannel()
                                         .flatMap(channel -> channel.sendMessageEmbeds(newEmbed.build())).complete();
                             }
-                        }
+
                     }
 
                 } catch (SQLException e) {
@@ -94,16 +93,13 @@ public class Listener implements EventListener {
 
             // Query the database and find if the user is AFK
             try {
-                ResultSet result = database.fullQuery(user.getId());
+                AFKStatus status = database.getAFKStatus(user.getId());
+                if (status.isAFK) {
+                    database.updateAFK(false, null, user.getId());
 
-                if (result.first()) {
-                    if (result.getBoolean(3)) {
-                        database.updateAFK(false, null, user.getId());
-
-                        // Now DM the member telling them that the AFK status is removed
-                        user.openPrivateChannel()
-                                .flatMap(privateChannel -> privateChannel.sendMessage("Your AFK status has been removed.")).complete();
-                    }
+                    // Now DM the member telling them that the AFK status is removed
+                    user.openPrivateChannel()
+                            .flatMap(privateChannel -> privateChannel.sendMessage("Your AFK status has been removed.")).complete();
                 }
 
             } catch (SQLException e) {

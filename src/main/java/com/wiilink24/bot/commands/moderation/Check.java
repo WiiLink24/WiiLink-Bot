@@ -34,7 +34,6 @@ public class Check extends Command {
         event.async(() -> {
             try {
                 String muted = "**No**";
-                Integer strikes = 0;
                 Member member = SearcherUtil.findMember(event, event.getArgs());
                 User user;
 
@@ -51,12 +50,7 @@ public class Check extends Command {
                     }
                 }
 
-                ResultSet result = database.fullQuery(user.getId());
-
-                if (result.first()) {
-                    strikes = result.getInt(2);
-                }
-
+                int strikes = database.getStrikes(user.getId());
                 String finalMuted = muted;
                 Integer finalStrikes = strikes;
                 event.getGuild().retrieveBan(user).queue(

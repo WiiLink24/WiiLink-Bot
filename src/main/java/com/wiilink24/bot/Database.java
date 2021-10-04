@@ -1,5 +1,7 @@
 package com.wiilink24.bot;
 
+import com.wiilink24.bot.utils.AFKStatus;
+
 import java.sql.*;
 
 // For common Database functions
@@ -33,12 +35,36 @@ public class Database {
         }
     }
 
-    public ResultSet fullQuery(String userID) throws SQLException {
+    public AFKStatus getAFKStatus(String userID) throws SQLException {
         try (Connection con = Bot.connectionPool.getConnection()) {
-            PreparedStatement query = con.prepareStatement("SELECT * FROM userinfo WHERE userid = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            PreparedStatement query = con.prepareStatement("SELECT afk, afk_reason FROM userinfo WHERE userid = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             query.setObject(1, userID);
 
-            return query.executeQuery();
+            ResultSet rs = query.executeQuery();
+            if (rs.next()) {
+                // These may be nullable.
+                boolean state = rs.getBoolean(1);
+                String reason = rs.getString(2) == null ? "" : rs.getString(2);
+                return new AFKStatus(state, reason);
+            } else {
+                // Assume not AFK.
+                return new AFKStatus(false, "");
+            }
+        }
+    }
+
+    public int getStrikes(String userID) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement query = con.prepareStatement("SELECT strikes FROM userinfo WHERE userid = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            query.setObject(1, userID);
+
+            ResultSet rs = query.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            } else {
+                // Assume not AFK.
+                return 0;
+            }
         }
     }
 

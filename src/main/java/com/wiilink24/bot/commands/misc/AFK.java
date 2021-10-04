@@ -17,29 +17,27 @@ import java.sql.*;
 
 public class AFK extends Command {
     private final Database database;
-    private final Bot bot;
 
-    public AFK(Bot bot)  {
+    public AFK()  {
         this.name = "afk";
         this.arguments = "[reason]";
         this.help = "Run the AFK command so members that ping you know you are AFK. You will also get a DM with all the messages you were mentioned in while AFK.";
         this.category = Categories.MISC;
         this.database = new Database();
-        this.bot = bot;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        try (Connection con = DriverManager.getConnection(bot.db(), bot.dbUser(), bot.dbPass())) {
+        try {
             String userID = event.getAuthor().getId();
-            boolean exists = database.doesExist(con, userID);
+            boolean exists = database.doesExist(userID);
 
             // The user is not in the database, add them
             if (!exists) {
-                database.createUser(con, userID);
+                database.createUser(userID);
             }
 
-            database.updateAFK(con, true, event.getArgs(), userID);
+            database.updateAFK(true, event.getArgs(), userID);
 
             event.reply("**" + event.getAuthor().getName() + "**#" + event.getAuthor().getDiscriminator() + " is now AFK.");
         } catch (SQLException e) {

@@ -14,6 +14,7 @@ import com.wiilink24.bot.events.Listener;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
 import java.time.Instant;
@@ -21,9 +22,19 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 public class Bot {
+    static BasicDataSource connectionPool;
     Config config = new Config();
 
     void run() throws LoginException {
+        // Create database pool
+        connectionPool = new BasicDataSource();
+        connectionPool.setDriverClassName("org.postgresql.Driver");
+        String[] credentials = config.getDatabaseCreds();
+        connectionPool.setUsername(credentials[0]);
+        connectionPool.setPassword(credentials[1]);
+        connectionPool.setUrl(credentials[2]);
+        connectionPool.setInitialSize(3);
+
         // Start Sentry
         Sentry.init( sentryOptions -> {
                 sentryOptions.setDsn("");
@@ -36,7 +47,7 @@ public class Bot {
                 .setOwnerId("829487301422743613")
                 .addCommands(
                         /* Misc Commands */
-                        new AFK(this),
+                        new AFK(),
                         new About(),
                         new Avatar(),
                         new Credits(),
@@ -60,7 +71,7 @@ public class Bot {
                         new Strike(this),
 
                         /* Developer commands */
-                        new UploadWad(this),
+                        new UploadWad(),
 
                         /* Owner Only Commands */
                         new Bash(),

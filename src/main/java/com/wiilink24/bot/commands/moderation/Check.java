@@ -20,11 +20,9 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Check extends Command {
-    private final Bot bot;
     private final Database database;
 
     public Check(Bot bot) {
-        this.bot = bot;
         this.database = new Database();
         this.name = "check";
         this.category = Categories.MODERATION;
@@ -34,7 +32,7 @@ public class Check extends Command {
     @Override
     protected void execute(CommandEvent event) {
         event.async(() -> {
-            try (Connection con = DriverManager.getConnection(bot.db(), bot.dbUser(), bot.dbPass())) {
+            try {
                 String muted = "**No**";
                 Integer strikes = 0;
                 Member member = SearcherUtil.findMember(event, event.getArgs());
@@ -53,7 +51,7 @@ public class Check extends Command {
                     }
                 }
 
-                ResultSet result = database.fullQuery(con, user.getId());
+                ResultSet result = database.fullQuery(user.getId());
 
                 if (result.first()) {
                     strikes = result.getInt(2);

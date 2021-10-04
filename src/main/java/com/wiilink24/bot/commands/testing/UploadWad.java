@@ -6,11 +6,8 @@ import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import com.wiilink24.bot.commands.Categories;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.interactions.components.Button;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 enum FlagType {
@@ -26,12 +23,9 @@ enum FlagType {
  * @author Spotlight
  */
 public class UploadWad extends Command {
-    private Bot bot;
     private Database database;
 
-
-    public UploadWad(Bot bot) {
-        this.bot = bot;
+    public UploadWad() {
         this.name = "uploadwad";
         this.help = "Register a WAD available for download.";
         this.category = Categories.DEVELOPER;
@@ -42,7 +36,7 @@ public class UploadWad extends Command {
     protected void execute(CommandEvent event) {
         // Ensure the running user has the needed developer ID.
         String neededId = Bot.developerRoleId();
-        if (!event.isFromType(ChannelType.TEXT) || event.getMember().getRoles().stream().noneMatch(r -> r.getId().equalsIgnoreCase(neededId))) {
+        if (event.getMember().getRoles().stream().noneMatch(r -> r.getId().equalsIgnoreCase(neededId))) {
             event.replyError("You must have the Developer role to use that!");
             return;
         }
@@ -92,11 +86,10 @@ public class UploadWad extends Command {
             }
         }
 
-        int interaction_id;
-        try (Connection con = DriverManager.getConnection(bot.db(), bot.dbUser(), bot.dbPass())) {
-            // TODO
-            interaction_id = database.insertWad(con, filename, title);
-            event.reply("ID: " + interaction_id);
+        int interactionId;
+        try {
+            interactionId = database.insertWad(filename, title);
+            event.reply("ID: " + interactionId);
         } catch (SQLException throwables) {
             event.replyError("Unable to insert WAD to database.");
             throwables.printStackTrace();
@@ -109,9 +102,9 @@ public class UploadWad extends Command {
                 .setDescription(description);
 
         event.getChannel()
-                .sendMessage(embed.build())
+                .sendMessageEmbeds(embed.build())
                 .setActionRow(
-                        Button.success("patchdl_" + interaction_id, "Download")
+                        Button.success("patchdl_" + interactionId, "Download")
                 )
                 .queue();
     }

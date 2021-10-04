@@ -108,7 +108,7 @@
         <dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>jda-utilities-command</artifactId>
-            <version>3.0.3</version>
+            <version>3.0.5</version>
         </dependency>
 
         <!-- jsoup HTML parser library @ https://jsoup.org/ -->
@@ -134,7 +134,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>5.2.0</version>
+            <version>5.2.1</version>
         </dependency>
 
         <dependency>
@@ -143,10 +143,26 @@
             <version>3.0.9</version>
         </dependency>
 
+        <!-- Database handling -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.2.24.jre7</version>
+        </dependency>
+
+        <!-- https://jdbc.postgresql.org/documentation/head/ds-ds.html
+        recommends to use DBCP instead of itself -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
+        <!-- Dev file uploading -->
+        <dependency>
+            <groupId>me.bramhaag</groupId>
+            <artifactId>owo-java</artifactId>
+            <version>2.2</version>
         </dependency>
     </dependencies>
 </project>

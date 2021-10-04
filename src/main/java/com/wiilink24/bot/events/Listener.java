@@ -53,12 +53,12 @@ public class Listener implements EventListener {
 
             // If there are no mentioned members, don't bother querying
             if (queried_members.size() != 0) {
-                try (Connection con = DriverManager.getConnection(bot.db(), bot.dbUser(), bot.dbPass())) {
+                try {
                     for (Member queried_member : queried_members) {
                         User user = queried_member.getUser();
 
                         // Query to see if the user exists and grab AFK status
-                        ResultSet result = database.fullQuery(con, user.getId());
+                        ResultSet result = database.fullQuery(user.getId());
 
                         if (result.first()) {
                             if (result.getBoolean(3)) {
@@ -66,7 +66,7 @@ public class Listener implements EventListener {
                                         .setAuthor(user.getName() + " is AFK", null, user.getEffectiveAvatarUrl())
                                         .addField("Reason:", result.getString(4), false);
 
-                                message.getChannel().sendMessage(embed.build()).queue();
+                                message.getChannel().sendMessageEmbeds(embed.build()).queue();
 
                                 // Now send a DM to the AFK user with the mentioned message
                                 EmbedBuilder newEmbed = new EmbedBuilder()
@@ -75,7 +75,7 @@ public class Listener implements EventListener {
                                         .setFooter("#" + message.getChannel().getName(), message.getGuild().getIconUrl());
 
                                 user.openPrivateChannel()
-                                        .flatMap(channel -> channel.sendMessage(newEmbed.build())).complete();
+                                        .flatMap(channel -> channel.sendMessageEmbeds(newEmbed.build())).complete();
                             }
                         }
                     }
@@ -93,12 +93,12 @@ public class Listener implements EventListener {
             User user = typing.getUser();
 
             // Query the database and find if the user is AFK
-            try (Connection con = DriverManager.getConnection(bot.db(), bot.dbUser(), bot.dbPass())) {
-                ResultSet result = database.fullQuery(con, user.getId());
+            try {
+                ResultSet result = database.fullQuery(user.getId());
 
                 if (result.first()) {
                     if (result.getBoolean(3)) {
-                        database.updateAFK(con, false, null, user.getId());
+                        database.updateAFK(false, null, user.getId());
 
                         // Now DM the member telling them that the AFK status is removed
                         user.openPrivateChannel()
@@ -201,6 +201,6 @@ public class Listener implements EventListener {
     /* Sends the embed to our log channel */
     private void sendMessage(GenericEvent event, String topMessage, EmbedBuilder embed) {
         event.getJDA().getTextChannelById(modLog).sendMessage(topMessage)
-                .embed(embed.build()).queue();
+                .setEmbeds(embed.build()).queue();
     }
 }

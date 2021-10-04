@@ -41,7 +41,7 @@ public class Strike extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        try (Connection con = DriverManager.getConnection(bot.db(), bot.dbUser(), bot.dbPass())) {
+        try {
             String[] args = event.getArgs().split("\\s", 3);
             String strikeReason;
             String message;
@@ -55,14 +55,14 @@ public class Strike extends Command {
                 strikeReason = args[2];
             }
 
-            boolean exists = database.doesExist(con, user.getId());
+            boolean exists = database.doesExist(user.getId());
             // The user is not in the database, add them
             if (!exists) {
-                database.createUser(con, user.getId());
+                database.createUser(user.getId());
             }
 
             // Query to see how many strikes the user has before our new strikes
-            ResultSet result = database.fullQuery(con, user.getId());
+            ResultSet result = database.fullQuery(user.getId());
             int strikes = 0;
             int oldStrikes = 0;
 
@@ -73,7 +73,7 @@ public class Strike extends Command {
 
             event.reply("Successfully gave " + args[1] + " to **" + user.getName() + "**#" + user.getDiscriminator());
             // Now we can strike them and send the user a DM
-            database.updateStrike(con, user.getId(), strikes);
+            database.updateStrike(user.getId(), strikes);
             bot.sendDM(user, "You were given " + args[1] + " strikes in WiiLink for `" + strikeReason + "`").queue();
             event.getJDA().getTextChannelById(bot.modLog()).sendMessage(
                     timestamp

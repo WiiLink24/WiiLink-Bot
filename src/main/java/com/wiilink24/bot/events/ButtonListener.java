@@ -7,16 +7,11 @@ import io.sentry.Sentry;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 public class ButtonListener extends ListenerAdapter {
-    private Bot bot;
     private Database database;
     private WadUtil wad;
 
     public ButtonListener(Bot bot) {
-        this.bot = bot;
         this.database = new Database();
         this.wad = new WadUtil(bot);
     }

@@ -16,11 +16,16 @@ public class Config {
     public String[] getDatabaseCreds() {
         String user = getString("DB_USER");
         String password = getString("DB_PASS");
+        String port = getString("DB_PORT") == null ? "5432" : getString("DB_PORT");
 
         // Change the IP and port if needed.
-        String database = "jdbc:postgresql://localhost:5432/" + getString("DB_NAME");
+        String database = "jdbc:postgresql://localhost:" + port + "/" + getString("DB_NAME");
 
         return new String[]{user, password, database};
+    }
+
+    public String getSentryDSN() {
+        return getString("SENTRY_DSN") == null ? "" : getString("SENTRY_DSN");
     }
 
     public String getDeeplCreds() {

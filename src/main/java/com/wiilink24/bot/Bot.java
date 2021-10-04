@@ -37,7 +37,7 @@ public class Bot {
 
         // Start Sentry
         Sentry.init( sentryOptions -> {
-                sentryOptions.setDsn("");
+                sentryOptions.setDsn(config.getSentryDSN());
                 sentryOptions.setTracesSampleRate(1.0);
             }
         );

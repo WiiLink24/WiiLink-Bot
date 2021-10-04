@@ -27,6 +27,10 @@ public class Config {
         return getString("DEEPL_TOKEN");
     }
 
+    public String getOwoCreds() {
+        return getString("OWO_TOKEN");
+    }
+
     public String getWadsDirectory() {
         return getString("WADS_DIR");
     }

@@ -67,7 +67,7 @@
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>
-                <version>22.0.0</version>
+                <version>23.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -94,6 +94,11 @@
             <id>maven_central</id>
             <name>Maven Central</name>
             <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <name>JitPack</name>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -125,6 +130,7 @@
             <version>2.2.0</version>
         </dependency>
 
+        <!-- OCR -->
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-vision</artifactId>
@@ -160,9 +166,9 @@
 
         <!-- Dev file uploading -->
         <dependency>
-            <groupId>me.bramhaag</groupId>
-            <artifactId>owo-java</artifactId>
-            <version>2.2</version>
+            <groupId>codes.owo.spotlightishere</groupId>
+            <artifactId>owo.java</artifactId>
+            <version>8a05397f3e</version>
         </dependency>
     </dependencies>
 </project>

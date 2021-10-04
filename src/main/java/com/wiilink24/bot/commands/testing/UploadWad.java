@@ -5,6 +5,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import com.wiilink24.bot.commands.Categories;
+import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.components.Button;
 
@@ -90,9 +91,9 @@ public class UploadWad extends Command {
         try {
             interactionId = database.insertWad(filename, title);
             event.reply("ID: " + interactionId);
-        } catch (SQLException throwables) {
+        } catch (SQLException e) {
             event.replyError("Unable to insert WAD to database.");
-            throwables.printStackTrace();
+            Sentry.captureException(e);
             return;
         }
 
@@ -101,7 +102,8 @@ public class UploadWad extends Command {
                 .setTitle("New release: " + title)
                 .setDescription(description);
 
-        event.getChannel()
+        event.getJDA()
+                .getTextChannelById(Bot.patchesChannel())
                 .sendMessageEmbeds(embed.build())
                 .setActionRow(
                         Button.success("patchdl_" + interactionId, "Download")

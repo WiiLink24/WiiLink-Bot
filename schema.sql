@@ -9,3 +9,8 @@ CREATE TABLE public.wads (
     filename      varchar,
     readable_name varchar
 );
+CREATE TABLE public.wad_urls (
+    user_id varchar,
+    wad_id int,
+    wad_url varchar
+);

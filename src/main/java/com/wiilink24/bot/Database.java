@@ -75,4 +75,67 @@ public class Database {
             }
         }
     }
+
+    /**
+     * Returns the stored filename for a given WAD ID.
+     *
+     * @param patchId The WAD ID to look up.
+     * @return The filename registered for the WAD.
+     * @throws SQLException Should the execution fail.
+     */
+    public String getWadFilename(int patchId) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement query = con.prepareStatement("SELECT filename FROM wads WHERE file_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            query.setInt(1, patchId);
+
+            ResultSet set = query.executeQuery();
+            if (set.next()) {
+                return set.getString(1);
+            } else {
+                return "";
+            }
+        }
+    }
+
+    /**
+     * Gets a cached WAD url for the given WAD and user ID.
+     *
+     * @param patchId The WAD ID to look up.
+     * @param userId The user ID to look up.
+     * @return The cached WAD URL, or "" if none.
+     * @throws SQLException Should the execution fail.
+     */
+    public String getWadUrl(int patchId, String userId) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement query = con.prepareStatement("SELECT wad_url FROM wad_urls WHERE wad_id = ? AND user_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            query.setInt(1, patchId);
+            query.setString(2, userId);
+
+            ResultSet set = query.executeQuery();
+            if (set.next()) {
+                return set.getString(1);
+            } else {
+                return "";
+            }
+        }
+    }
+
+    /**
+     * Sets the WAD URL for the given pair of IDs for caching.
+     *
+     * @param patchId The WAD ID to use.
+     * @param userId The user ID to associate against.
+     * @param uploadedUrl The URL to cache.
+     * @throws SQLException Should the execution fail.
+     */
+    public void setWadUrl(int patchId, String userId, String uploadedUrl) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("INSERT INTO wad_urls (wad_id, user_id, wad_url) VALUES (?, ?, ?)");
+
+            pst.setInt(1, patchId);
+            pst.setString(2, userId);
+            pst.setString(3, uploadedUrl);
+            pst.executeUpdate();
+        }
+    }
 }

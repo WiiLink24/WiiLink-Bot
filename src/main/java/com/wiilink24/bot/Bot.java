@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.wiilink24.bot.commands.misc.*;
 import com.wiilink24.bot.commands.moderation.*;
 import com.wiilink24.bot.commands.testing.UploadWad;
+import com.wiilink24.bot.events.ButtonListener;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -29,10 +30,9 @@ public class Bot {
         // Create database pool
         connectionPool = new BasicDataSource();
         connectionPool.setDriverClassName("org.postgresql.Driver");
-        String[] credentials = config.getDatabaseCreds();
-        connectionPool.setUsername(credentials[0]);
-        connectionPool.setPassword(credentials[1]);
-        connectionPool.setUrl(credentials[2]);
+        connectionPool.setUsername(dbUser());
+        connectionPool.setPassword(dbPass());
+        connectionPool.setUrl(dbUrl());
         connectionPool.setInitialSize(3);
 
         // Start Sentry
@@ -81,7 +81,7 @@ public class Bot {
         JDABuilder builder = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
-                .addEventListeners(client.build(), new Listener(this))
+                .addEventListeners(client.build(), new Listener(this), new ButtonListener(this))
                 .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS);
 
         builder.build();
@@ -96,16 +96,12 @@ public class Bot {
         return "755522585864962099";
     }
 
-    public String patchesChannel() {
+    public static String patchesChannel() {
         return "894316256788893706";
     }
 
     public static String developerRoleId() {
         return "750591972044963850";
-    }
-
-    public static String testerRoleId() {
-        return "751858257307631697";
     }
 
     public String timestamp() {
@@ -120,9 +116,19 @@ public class Bot {
         return config.getDatabaseCreds()[1];
     }
 
-    public String db() {
+    public String dbUrl() {
         return config.getDatabaseCreds()[2];
     }
 
-    public String deepl() {return config.getDeeplCreds();}
+    public String deepl() {
+        return config.getDeeplCreds();
+    }
+
+    public String wadPath() {
+        return config.getWadsDirectory();
+    }
+
+    public String owoToken() {
+        return config.getOwoCreds();
+    }
 }

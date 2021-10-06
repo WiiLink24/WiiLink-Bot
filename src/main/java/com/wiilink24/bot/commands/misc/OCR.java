@@ -35,6 +35,7 @@ public class OCR extends Command {
         this.name = "ocr";
         this.arguments = "[url]";
         this.category = Categories.MISC;
+        this.guildOnly = false;
         this.help = "Grabs text from the specified image url.";
     }
 

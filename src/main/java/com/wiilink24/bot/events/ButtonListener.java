@@ -5,6 +5,7 @@ import com.wiilink24.bot.Database;
 import com.wiilink24.bot.utils.WadUtil;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ButtonListener extends ListenerAdapter {
@@ -52,6 +53,14 @@ public class ButtonListener extends ListenerAdapter {
                         .sendMessage("A database error occurred. Please contact a developer.")
                         .queue();
             }
+        }
+    }
+    
+    @Override
+    public void onSlashCommand(SlashCommandEvent event) {
+        if (event.getName().equals("apply")) {
+            event.deferReply().setEphemeral(true).queue();
+            event.getHook().sendMessage("Click on this link to apply!\n<https://tripetto.app/run/849CLXP5VM?userid=" + event.getUser().getId() + ">").queue();
         }
     }
 }

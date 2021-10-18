@@ -39,6 +39,11 @@ public class Userinfo extends Command {
         String roles = "";
         roles = member.getRoles().stream().map(role -> " "+role.getAsMention()).reduce(roles, String::concat);
 
+        String nick = "None";
+        if (!member.getNickname().isEmpty()) {
+            nick = member.getNickname();
+        }
+        
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(String.format("Info about %s #%s", member.getUser().getName(), member.getUser().getDiscriminator()))
                 .setColor(member.getColor())

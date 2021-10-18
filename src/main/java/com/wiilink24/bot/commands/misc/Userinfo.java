@@ -49,7 +49,7 @@ public class Userinfo extends Command {
                 .setColor(member.getColor())
                 .setThumbnail(member.getUser().getEffectiveAvatarUrl())
                 .addField("User ID", member.getId(), false)
-                .addField("Nickname", member.getNickname(), false)
+                .addField("Nickname", nick, false)
                 .addField("Account Creation", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
                 .addField("Join Date", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
                 .addField(String.format("Roles [%s]", member.getRoles().toArray().length), roles, false);

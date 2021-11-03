@@ -55,12 +55,4 @@ public class ButtonListener extends ListenerAdapter {
             }
         }
     }
-    
-    @Override
-    public void onSlashCommand(SlashCommandEvent event) {
-        if (event.getName().equals("apply")) {
-            event.deferReply().setEphemeral(true).queue();
-            event.getHook().sendMessage("Click on this link to apply!\n<https://tripetto.app/run/849CLXP5VM?userid=" + event.getUser().getId() + ">").queue();
-        }
-    }
 }

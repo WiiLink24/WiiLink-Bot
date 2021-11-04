@@ -4,10 +4,14 @@ import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import com.wiilink24.bot.utils.WadUtil;
 import io.sentry.Sentry;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.sql.SQLException;
 
 public class ButtonListener extends ListenerAdapter {
     private Database database;
@@ -27,6 +31,7 @@ public class ButtonListener extends ListenerAdapter {
         final Role contentUpdates = event.getGuild().getRoleById("790467855404892180");
         final Role relatedUpdates = event.getGuild().getRoleById("797331365460312104");
         final Role potwUpdates = event.getGuild().getRoleById("835328614500532225");
+        final Category ticketCategory = event.getGuild().getCategoryById("905822898424520725");
         
         if (passedId.startsWith("patchdl_")) {
             // This may take a while. Let Discord know we received the event.
@@ -158,6 +163,52 @@ public class ButtonListener extends ListenerAdapter {
             event.getGuild().addRoleToMember(member.getId(), potwUpdates).queue();
 
             event.reply("Successfully added the POTW Updates role.").setEphemeral(true).queue();
+        }
+        else if (event.getComponentId().startsWith("ticket")) {
+            Member member = event.getMember();
+
+            // This may take a while. Let Discord know we received the event.
+            event.deferReply()
+                    .setEphemeral(true)
+                    .queue();
+
+            try {
+                boolean hasTicket = database.checkTicketUser(member.getId());
+                if (hasTicket) {
+                    event.getHook().sendMessage("You already have an open ticket!").setEphemeral(true).queue();
+                    return;
+                }
+            } catch (SQLException e) {
+                event.getHook().sendMessage("Failed to check database").setEphemeral(true).queue();
+                Sentry.captureException(e);
+                return;
+            }
+
+            // Insert ticket into the database then get the ticket id
+            int ticketId;
+            try {
+                ticketId = database.insertTicket(member.getId());
+            } catch (SQLException e) {
+                event.getHook().sendMessage("Unable to insert ticket in database.").setEphemeral(true).queue();
+                Sentry.captureException(e);
+                return;
+            }
+
+            event.getGuild().createTextChannel("ticket-" + ticketId, ticketCategory).queue(
+                success -> {
+                    // We will now give view and write permissions to the user
+                    success.createPermissionOverride(member)
+                            .setAllow(Permission.VIEW_CHANNEL)
+                            .queue();
+
+                    event.getHook()
+                            .sendMessage("Successfully created a ticket! Your ticket ID is " + ticketId + ". Please wait for a staff member in <#" + success.getId() + "> to answer your question.")
+                            .queue();
+
+                    // Now send a message to admins and moderators regarding the new ticket
+                    success.sendMessage("<@&750596106400038932> <@&901928638520369223> a new ticket was created by <@" + member.getId() + ">.").queue();
+                }
+            );
         }
     }
 }

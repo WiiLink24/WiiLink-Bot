@@ -69,6 +69,7 @@ public class Bot {
                         new Mute(this),
                         new Unban(),
                         new Strike(this),
+                        new Ticket(),
 
                         /* Developer commands */
                         new UploadWad(),

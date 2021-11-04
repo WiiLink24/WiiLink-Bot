@@ -78,6 +78,38 @@ public class Database {
         }
     }
 
+    public int insertTicket(String userID) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("INSERT INTO ticket (user_id) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+            pst.setString(1, userID);
+            pst.executeUpdate();
+
+            ResultSet keys = pst.getGeneratedKeys();
+            if (keys.next()) {
+                return keys.getInt(1);
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    public boolean checkTicketUser(String userID) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("SELECT user_id FROM ticket WHERE user_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            pst.setString(1, userID);
+
+            return pst.executeQuery().first();
+        }
+    }
+
+    public void closeTicket(int ticketId) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("DELETE FROM ticket WHERE ticket_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            pst.setInt(1, ticketId);
+            pst.executeUpdate();
+        }
+    }
+
     /**
      * Inserts a WAD into the database.
      *

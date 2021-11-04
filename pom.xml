@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wiilink.bot</groupId>
     <artifactId>WiiLink-Bot</artifactId>
-    <version>1.0-</version>
+    <version>1.0</version>
 
     <build>
         <finalName>WiiLink-Bot</finalName>
@@ -86,14 +86,9 @@
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
         <repository>
-            <id>bintray-jagrosh-maven</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/jagrosh/maven</url>
-        </repository>
-        <repository>
             <id>maven_central</id>
             <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2/</url>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
             <id>jitpack.io</id>

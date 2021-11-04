@@ -158,5 +158,4 @@ public class ButtonListener extends ListenerAdapter {
             event.reply("Successfully added the POTW Updates role.").setEphemeral(true).queue();
         }
     }
-    }
 }

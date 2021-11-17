@@ -161,7 +161,7 @@
 
         <!-- Dev file uploading -->
         <dependency>
-            <groupId>codes.owo.spotlightishere</groupId>
+            <groupId>com.github.spotlightishere</groupId>
             <artifactId>owo.java</artifactId>
             <version>8a05397f3e</version>
         </dependency>

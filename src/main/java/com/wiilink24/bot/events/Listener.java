@@ -32,9 +32,9 @@ public class Listener implements EventListener {
 
     public Listener(Bot bot) {
         this.bot = bot;
-        this.modLog = bot.modLog();
+        this.modLog = Bot.modLog();
         this.cache = new MessageCache();
-        this.timestamp = bot.timestamp();
+        this.timestamp = Bot.timestamp();
         this.database = new Database();
     }
 
@@ -44,22 +44,23 @@ public class Listener implements EventListener {
         {
             Message message = ((GuildMessageReceivedEvent)event).getMessage();
 
-            if(!message.getAuthor().isBot())
-            {
-                this.cache.putMessage(message);
-            }
+            if (message.getGuild().getId().equals(bot.wiiLinkServerId())) {
+                if(!message.getAuthor().isBot())
+                {
+                    this.cache.putMessage(message);
+                }
 
-            // The below is for the AFK command
-            List<Member> queried_members = message.getMentionedMembers();
+                // The below is for the AFK command
+                List<Member> queried_members = message.getMentionedMembers();
 
-            // If there are no mentioned members, don't bother querying
-            if (queried_members.size() != 0) {
-                try {
-                    for (Member queried_member : queried_members) {
-                        User user = queried_member.getUser();
+                // If there are no mentioned members, don't bother querying
+                if (queried_members.size() != 0) {
+                    try {
+                        for (Member queried_member : queried_members) {
+                            User user = queried_member.getUser();
 
-                        // Query to see if the user exists and grab AFK status
-                        AFKStatus status = database.getAFKStatus(user.getId());
+                            // Query to see if the user exists and grab AFK status
+                            AFKStatus status = database.getAFKStatus(user.getId());
                             if (status.isAFK) {
                                 EmbedBuilder embed = new EmbedBuilder()
                                         .setAuthor(user.getName() + " is AFK", null, user.getEffectiveAvatarUrl())
@@ -77,10 +78,11 @@ public class Listener implements EventListener {
                                         .flatMap(channel -> channel.sendMessageEmbeds(newEmbed.build())).complete();
                             }
 
-                    }
+                        }
 
-                } catch (SQLException e) {
-                    Sentry.captureException(e);
+                    } catch (SQLException e) {
+                        Sentry.captureException(e);
+                    }
                 }
             }
         }
@@ -109,88 +111,99 @@ public class Listener implements EventListener {
         else if (event instanceof GuildMessageDeleteEvent)
         {
             GuildMessageDeleteEvent delete = (GuildMessageDeleteEvent) event;
-            MessageCache.CachedMessage message = this.cache.pullMessage(delete.getGuild(), delete.getMessageIdLong());
 
-            if (message != null) {
-                String oldMessage = message.getContentRaw() + "\n";
-                oldMessage = message.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(oldMessage, String::concat);
-                EmbedBuilder embed = new EmbedBuilder()
-                        .setColor(Color.RED)
-                        .setDescription(oldMessage);
+            if (delete.getGuild().getId().equals(bot.wiiLinkServerId())) {
+                MessageCache.CachedMessage message = this.cache.pullMessage(delete.getGuild(), delete.getMessageIdLong());
 
-                String topMessage = timestamp
-                        + " :x: **"
-                        + message.getUsername()
-                        + "**#"
-                        + message.getDiscriminator()
-                        + " (ID:"
-                        + message.getAuthorId()
-                        + ")'s message was deleted from "
-                        + delete.getChannel().getAsMention()
-                        + ":";
-                sendMessage(event, topMessage, embed);
+                if (message != null) {
+                    String oldMessage = message.getContentRaw() + "\n";
+                    oldMessage = message.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(oldMessage, String::concat);
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setColor(Color.RED)
+                            .setDescription(oldMessage);
+
+                    String topMessage = timestamp
+                            + " :x: **"
+                            + message.getUsername()
+                            + "**#"
+                            + message.getDiscriminator()
+                            + " (ID:"
+                            + message.getAuthorId()
+                            + ")'s message was deleted from "
+                            + delete.getChannel().getAsMention()
+                            + ":";
+                    sendMessage(event, topMessage, embed);
+                }
             }
         }
         else if (event instanceof GuildMessageUpdateEvent) {
             Message message = ((GuildMessageUpdateEvent)event).getMessage();
 
-            if (!message.getAuthor().isBot()) {
-                // Store old message in a variable then log the new message
-                MessageCache.CachedMessage old = this.cache.putMessage(message);
+            if (message.getGuild().getId().equals(bot.wiiLinkServerId())) {
+                if (!message.getAuthor().isBot()) {
+                    // Store old message in a variable then log the new message
+                    MessageCache.CachedMessage old = this.cache.putMessage(message);
 
-                if (old != null) {
-                    String oldMessage = old.getContentRaw() + "\n";
-                    oldMessage = old.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(oldMessage, String::concat);
+                    if (old != null) {
+                        String oldMessage = old.getContentRaw() + "\n";
+                        oldMessage = old.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(oldMessage, String::concat);
 
-                    String newMessage = message.getContentRaw() + "\n";
-                    newMessage = message.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(newMessage, String::concat);
+                        String newMessage = message.getContentRaw() + "\n";
+                        newMessage = message.getAttachments().stream().map(attachment -> attachment.getUrl() + "\n").reduce(newMessage, String::concat);
 
-                    EmbedBuilder embed = new EmbedBuilder()
-                            .setColor(Color.YELLOW)
-                            .addField("From: ", oldMessage, false)
-                            .addField("To: ", newMessage, false);
+                        EmbedBuilder embed = new EmbedBuilder()
+                                .setColor(Color.YELLOW)
+                                .addField("From: ", oldMessage, false)
+                                .addField("To: ", newMessage, false);
 
-                    String topMessage = timestamp
-                            + " :warning: **"
-                            + old.getUsername()
-                            + "**#"
-                            + old.getDiscriminator()
-                            + " (ID:"
-                            + old.getAuthorId()
-                            + ") edited a message in <#"
-                            + message.getChannel().getId()
-                            + ">:";
-                    sendMessage(event, topMessage, embed);
+                        String topMessage = timestamp
+                                + " :warning: **"
+                                + old.getUsername()
+                                + "**#"
+                                + old.getDiscriminator()
+                                + " (ID:"
+                                + old.getAuthorId()
+                                + ") edited a message in <#"
+                                + message.getChannel().getId()
+                                + ">:";
+                        sendMessage(event, topMessage, embed);
+                    }
                 }
             }
         }
         else if (event instanceof GuildMemberJoinEvent) {
             GuildMemberJoinEvent member = (GuildMemberJoinEvent) event;
-            String message = timestamp
-                    + " :inbox_tray: **"
-                    + member.getUser().getName()
-                    + "**#"
-                    + member.getUser().getDiscriminator()
-                    + " (ID:"
-                    + member.getUser().getId()
-                    + ") joined the server.\nCreation: "
-                    + member.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
-            event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
+            if (member.getGuild().getId().equals(bot.wiiLinkServerId())) {
+                String message = timestamp
+                        + " :inbox_tray: **"
+                        + member.getUser().getName()
+                        + "**#"
+                        + member.getUser().getDiscriminator()
+                        + " (ID:"
+                        + member.getUser().getId()
+                        + ") joined the server.\nCreation: "
+                        + member.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME);
+
+                event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
+            }
         }
         else if (event instanceof GuildMemberRemoveEvent) {
             GuildMemberRemoveEvent member = (GuildMemberRemoveEvent) event;
-            String message = timestamp
-                    + " :outbox_tray: **"
-                    + member.getUser().getName()
-                    + "**#"
-                    + member.getUser().getDiscriminator()
-                    + " (ID:"
-                    + member.getUser().getId()
-                    + ") has been kicked or left the server.\nCreation: "
-                    + member.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
-            event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
+            if (member.getGuild().getId().equals(bot.wiiLinkServerId())) {
+                String message = timestamp
+                        + " :outbox_tray: **"
+                        + member.getUser().getName()
+                        + "**#"
+                        + member.getUser().getDiscriminator()
+                        + " (ID:"
+                        + member.getUser().getId()
+                        + ") has been kicked or left the server.\nCreation: "
+                        + member.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME);
+
+                event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
+            }
         }
     }
 

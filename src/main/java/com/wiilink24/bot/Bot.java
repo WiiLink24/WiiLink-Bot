@@ -93,7 +93,7 @@ public class Bot {
                 .flatMap(privateChannel -> privateChannel.sendMessage(message));
     }
 
-    public String modLog() {
+    public static String modLog() {
         return "755522585864962099";
     }
 

@@ -5,6 +5,7 @@ import com.wiilink24.bot.commands.misc.*;
 import com.wiilink24.bot.commands.moderation.*;
 import com.wiilink24.bot.commands.testing.UploadWad;
 import com.wiilink24.bot.events.ButtonListener;
+import com.wiilink24.bot.events.SlashCommandListener;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -15,6 +16,7 @@ import com.wiilink24.bot.events.Listener;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
@@ -61,14 +63,7 @@ public class Bot {
                         new Ping(),
 
                         /* Moderation Commands */
-                        new Clear(this),
-                        new Ban(),
-                        new Check(this),
                         new Translate(this),
-                        new Kick(this),
-                        new Mute(this),
-                        new Unban(),
-                        new Strike(this),
                         new Ticket(),
 
                         /* Developer commands */
@@ -82,13 +77,15 @@ public class Bot {
         JDABuilder builder = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
-                .addEventListeners(client.build(), new Listener(this), new ButtonListener(this))
-                .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS);
+                .enableCache(CacheFlag.VOICE_STATE)
+                .addEventListeners(client.build(), new Listener(this), new ButtonListener(this), new SlashCommandListener())
+                .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES);
 
         builder.build();
     }
 
-    public RestAction sendDM(User user, String message) {
+    // We return a RestAction because depending on use we can complete
+    public static RestAction sendDM(User user, String message) {
         return user.openPrivateChannel()
                 .flatMap(privateChannel -> privateChannel.sendMessage(message));
     }

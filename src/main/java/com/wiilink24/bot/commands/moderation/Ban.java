@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  * Ban command
@@ -15,46 +16,42 @@ import net.dv8tion.jda.api.entities.User;
  * @author Sketch
  */
 
-public class Ban extends Command {
-    private final Bot bot;
+public class Ban {
+    public Ban() {}
 
-    public Ban() {
-        this.bot = new Bot();
-        this.name = "ban";
-        this.category = Categories.MODERATION;
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-    }
+    public void ban(SlashCommandEvent event) {
+        // User is a required field
+        User user = event.getOptionsByName("user").get(0).getAsUser();
 
-    @Override
-    protected void execute(CommandEvent event) {
-        String[] args = event.getArgs().split("\\s", 2);
-        String banReason;
-        Member member = event.getGuild().retrieveMemberById(args[0]).complete();
-        User user = member.getUser();
-
-        // Build ban reason
-        if (args.length == 1) {
-            // No reason was provided
-            banReason = "No reason provided";
-        } else {
-            banReason = args[1];
+        if (event.getOptionsByName("user").get(0).getAsMember() != null) {
+            // Don't ban moderators or admins
+            if (event.getOptionsByName("user").get(0).getAsMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
+                event.reply("You cannot ban a moderator/admin!").queue();
+                return;
+            }
         }
 
-        bot.sendDM(user, "You were banned in WiiLink24 for **`" + banReason + "`**").complete();
+        // Reason is optional
+        String reason = "No reason provided.";
+        if (!event.getOptionsByName("reason").isEmpty()) {
+            reason = event.getOptionsByName("reason").get(0).getAsString();
+        }
 
-        event.getGuild().ban(member, 1, banReason).queue(
+        String finalReason = reason;
+        event.getGuild().ban(user, 1, reason).queue(
                 success -> {
                     EmbedBuilder embed = new EmbedBuilder()
                             .setTitle(":hammer: Successfully banned " + user.getName() + "#" + user.getDiscriminator())
-                            .setDescription("Reason: " + banReason + "\nBy: " + event.getAuthor().getAsMention());
-                    event.reply(embed.build());
+                            .setDescription("Reason: " + finalReason + "\nBy: " + event.getMember().getAsMention());
+
+                    event.replyEmbeds(embed.build()).queue();
 
                     // Send to logs
-                    String topMessage = bot.timestamp()
+                    String topMessage = Bot.timestamp()
                             + " :hammer: **"
-                            + event.getAuthor().getName()
+                            + event.getUser().getName()
                             + "**#"
-                            + event.getAuthor().getDiscriminator()
+                            + event.getUser().getDiscriminator()
                             + " banned **"
                             + user.getName()
                             + "**#"
@@ -63,12 +60,13 @@ public class Ban extends Command {
                             + user.getId()
                             + ")\nReason: "
                             + "`"
-                            + banReason
+                            + finalReason
                             + "`";
 
-                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(topMessage).queue();
+                    Bot.sendDM(user, "You were banned in WiiLink for **`" + finalReason + "`**").queue();
+                    event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(topMessage).queue();
                 }, failure -> {
-                    event.replyError("Failed to ban the requested user.");
+                    event.reply("Failed to ban the requested user.").queue();
                 }
         );
     }

@@ -64,6 +64,7 @@ public class Eval extends Command
             engine.put("bot", event.getSelfUser());
             engine.put("client", event.getClient());
             engine.put("author", event.getAuthor());
+            engine.put("guild", event.getGuild());
             engine.put("bot", bot);
             if(event.isFromType(ChannelType.TEXT))
             {

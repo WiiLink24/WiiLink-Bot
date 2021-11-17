@@ -1,18 +1,12 @@
 package com.wiilink24.bot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
-import com.wiilink24.bot.commands.Categories;
-import io.sentry.Sentry;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,159 +17,68 @@ import java.util.TimerTask;
  * @author Sketch
  */
 
-public class Strike extends Command {
+public class Strike {
     private final Database database;
-    private final Bot bot;
-    private final Timer timer;
-    private final String timestamp;
 
-    public Strike(Bot bot) {
-        this.bot = bot;
+    public Strike() {
         this.database = new Database();
-        this.name = "strike";
-        this.timer = new Timer();
-        this.timestamp = bot.timestamp();
-        this.category = Categories.MODERATION;
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        try {
-            String[] args = event.getArgs().split("\\s", 3);
-            String strikeReason;
-            int strikeCount;
-            String message;
-            Role mutedRole = event.getGuild().getRoleById("770836633419120650");
-            User user = event.getGuild().retrieveMemberById(args[0]).complete().getUser();
+    public void strike(SlashCommandEvent event) throws SQLException {
+        // User is a required field
+        User user = event.getOptionsByName("member").get(0).getAsUser();
 
-            // Build strike reason
-            if (args.length == 1) {
-                strikeReason = "No reason provided";
-                strikeCount = 1;
-            } else {
-                strikeReason = args[2];
-                strikeCount = Integer.parseInt(args[1]);
-            }
+        // Don't strike moderators or admins
+        if (event.getOptionsByName("member").get(0).getAsMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
+            event.reply("You cannot strike a moderator/admin!").queue();
+            return;
+        }
 
-            boolean exists = database.doesExist(user.getId());
-            // The user is not in the database, add them
-            if (!exists) {
-                database.createUser(user.getId());
-            }
+        // Now we handle the optionals
+        int strikes = 1;
+        if (!event.getOptionsByName("strikes").isEmpty()) {
+            strikes = Integer.parseInt(event.getOptionsByName("strikes").get(0).getAsString());
+        }
 
-            // Query to see how many strikes the user has before our new strikes
-            int oldStrikes = database.getStrikes(user.getId());
-            int strikes = oldStrikes + strikeCount;
+        String reason = "No reason provided.";
+        if (!event.getOptionsByName("reason").isEmpty()) {
+            reason = event.getOptionsByName("reason").get(0).getAsString();
+        }
 
-            event.reply("Successfully gave " + strikeCount + " to **" + user.getName() + "**#" + user.getDiscriminator());
-            // Now we can strike them and send the user a DM
-            database.updateStrike(user.getId(), strikes);
-            bot.sendDM(user, "You were given " + strikeCount + " strikes in WiiLink for `" + strikeReason + "`").queue();
-            event.getJDA().getTextChannelById(bot.modLog()).sendMessage(
-                    timestamp
-                    + " :triangular_flag_on_post: **"
-                    + event.getAuthor().getName()
-                    + "**#"
-                    + event.getAuthor().getDiscriminator()
-                    + " gave **"
-                    + user.getName()
-                    + "**#"
-                    + user.getDiscriminator()
-                    + " (`"
-                    + oldStrikes
-                    + " -> "
-                    + strikes
-                    + "`)\n"
-                    + "Reason: `"
-                    + strikeReason
-                    + "`"
-            ).complete();
+        // Now we deal with the striking
+        boolean exists = database.doesExist(user.getId());
+        // The user is not in the database, add them
+        if (!exists) {
+            database.createUser(user.getId());
+        }
 
-            // Basic unmute message
-            String unmuteText = timestamp
-                    + " :loud_sound: **"
-                    + user.getName()
-                    + "**#"
-                    + user.getDiscriminator()
-                    + " was unmuted because their mute time expired.";
+        // Query to see how many strikes the user has before our new strikes
+        int oldStrikes = database.getStrikes(user.getId());
+        int newStrikes = strikes + oldStrikes;
 
-            switch (strikes) {
-                case 1 -> {
-                }
-                case 2 -> {
-                    message = timestamp
-                            + " :mute: Due to having 2 strikes, **"
-                            + user.getName()
-                            + "**#"
-                            + user.getDiscriminator()
-                            + " was muted for 2 hours.";
-                    bot.sendDM(user, "Due to having 2 strikes, you have been muted for 10 minutes in WiiLink.").queue();
-                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).complete();
+        // Now we can strike them and send the user a DM
+        database.updateStrike(user.getId(), newStrikes);
 
-                    // Add muted role, then set a 10-minute timer
-                    event.getGuild().addRoleToMember(user.getId(), mutedRole).complete();
-                    timer.schedule(
-                            new TimerTask() {
-                                @Override
-                                public void run() {
-                                    event.getGuild().removeRoleFromMember(user.getId(), mutedRole).complete();
-                                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(unmuteText).complete();
-                                }
-                            }, 120 * 1000
-                    );
-                }
-                case 3 -> {
-                    message = timestamp
-                            + " :mute: Due to having 3 strikes, **"
-                            + user.getName()
-                            + "**#"
-                            + user.getDiscriminator()
-                            + " was muted for 2 hours.";
-                    bot.sendDM(user, "Due to having 3 strikes, you have been muted for 2 hours in WiiLink.").queue();
-                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).complete();
-
-                    // Add muted role, then set a 2-hour timer
-                    event.getGuild().addRoleToMember(user.getId(), mutedRole).complete();
-                    timer.schedule(
-                            new TimerTask() {
-                                @Override
-                                public void run() {
-                                    event.getGuild().removeRoleFromMember(user.getId(), mutedRole).complete();
-                                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(unmuteText).complete();
-                                }
-                            }, 7200 * 1000
-                    );
-                }
-                case 4 -> {
-                    message = timestamp
-                            + " :boot: Due to having 4 strikes, **"
-                            + user.getName()
-                            + "**#"
-                            + user.getDiscriminator()
-                            + " was kicked.";
-                    bot.sendDM(user, "Due to having 4 strikes, you were kicked from WiiLink.").complete();
-                    event.getGuild().kick(event.getGuild().retrieveMemberById(args[0]).complete()).complete();
-                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).complete();
-                }
-                default -> {
-                    // Anything higher than 4 will be a ban
-                    message = timestamp
-                        + " :hammer: Due to having 5 or more strikes, **"
+        event.reply("Successfully gave " + strikes + " strikes to **" + user.getName() + "**#" + user.getDiscriminator()).queue();
+        Bot.sendDM(user, "You were given " + strikes + " strikes in WiiLink for `" + reason + "`").queue();
+        event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(
+                Bot.timestamp()
+                        + " :triangular_flag_on_post: **"
+                        + event.getUser().getName()
+                        + "**#"
+                        + event.getUser().getDiscriminator()
+                        + " gave **"
                         + user.getName()
                         + "**#"
                         + user.getDiscriminator()
-                        + " was banned.";
-                    bot.sendDM(user, "Due to having 5 or more strikes, you were banned from WiiLink.").complete();
-                    event.getGuild().ban(event.getGuild().retrieveMemberById(args[0]).complete(), 1, strikeReason).complete();
-                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).complete();
-                }
-            }
-
-        } catch (SQLException e) {
-            Sentry.captureException(e);
-        }
+                        + " (`"
+                        + oldStrikes
+                        + " -> "
+                        + strikes
+                        + "`)\n"
+                        + "Reason: `"
+                        + reason
+                        + "`"
+        ).complete();
     }
-
-
 }

@@ -17,7 +17,6 @@ public class Ticket extends Command {
     public Ticket() {
         this.database = new Database();
         this.name = "ticket";
-        this.category = Categories.MODERATION;
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
     }
 

@@ -1,12 +1,10 @@
 package com.wiilink24.bot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.wiilink24.bot.Bot;
-import com.wiilink24.bot.commands.Categories;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  * Kick command
@@ -14,40 +12,46 @@ import net.dv8tion.jda.api.entities.Member;
  * @author Sketch
  */
 
-public class Kick extends Command {
-    private final Bot bot;
+public class Kick {
+    public Kick() {}
 
-    public Kick(Bot bot) {
-        this.bot = bot;
-        this.name = "kick";
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-        this.category = Categories.MODERATION;
-    }
+    public void kick(SlashCommandEvent event) {
+        // Member is a required field
+        Member member = event.getOptionsByName("member").get(0).getAsMember();
 
-    @Override
-    protected void execute(CommandEvent event) {
-        String[] args = event.getArgs().split("\\s", 2);
-        Member member = event.getGuild().retrieveMemberById(args[0]).complete();
-        String message = bot.timestamp()
+        // Don't kick moderators or admins
+        if (member.getPermissions().contains(Permission.BAN_MEMBERS)) {
+            event.reply("You cannot ban a moderator/admin!").queue();
+            return;
+        }
+
+        // Reason is optional
+        String reason = "No reason provided.";
+        if (!event.getOptionsByName("reason").isEmpty()) {
+            reason = event.getOptionsByName("reason").get(0).getAsString();
+        }
+
+        String message = Bot.timestamp()
                 + " :boot: **"
-                + event.getAuthor().getName()
+                + event.getUser().getName()
                 + "**#"
-                + event.getAuthor().getDiscriminator()
+                + event.getUser().getDiscriminator()
                 + " kicked **"
                 + member.getUser().getName()
                 + "**#"
                 + member.getUser().getDiscriminator()
                 + ".\nReason: `"
-                + args[1]
+                + reason
                 + "`";
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(":boot: Successfully kicked " + member.getUser().getName() + "#" + member.getUser().getDiscriminator())
-                .setDescription("Reason: " + args[1] + "\nBy: " + event.getAuthor().getAsMention());
-        event.reply(embed.build());
+                .setDescription("Reason: " + reason + "\nBy: " + event.getUser().getAsMention());
+        event.replyEmbeds(embed.build()).queue();
 
-        bot.sendDM(member.getUser(), "You were kicked from WiiLink for `" + args[1] + "`").complete();
+        Bot.sendDM(member.getUser(), "You were kicked from WiiLink for `" + reason + "`").complete();
         event.getGuild().kick(member).complete();
-        event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).complete();
+
+        event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(message).complete();
     }
 }

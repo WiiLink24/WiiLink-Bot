@@ -104,6 +104,8 @@ public class Bot {
     public static String developerRoleId() {
         return "750591972044963850";
     }
+    
+    public String wiiLinkServerId() {return "750581992223146074";}
 
     public String timestamp() {
         return DateTimeFormatter.ofPattern("'`['HH:mm:ss']`'").withZone(ZoneOffset.UTC).format(Instant.now());

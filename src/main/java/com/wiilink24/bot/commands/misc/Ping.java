@@ -1,22 +1,12 @@
 package com.wiilink24.bot.commands.misc;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.wiilink24.bot.commands.Categories;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
+public class Ping {
+    public Ping() {}
 
-public class Ping extends Command
-{
-    public Ping()
+    public void ping(SlashCommandEvent event)
     {
-        this.name = "ping";
-        this.help = "Checks the connection to Discord's servers";
-        this.category = Categories.MISC;
-    }
-
-    @Override
-    protected void execute(CommandEvent event)
-    {
-        event.getJDA().getRestPing().queue(ping -> event.replyFormatted("Gateway Ping: %dms, Discord API Ping: %dms", event.getJDA().getGatewayPing(), ping));
+        event.getJDA().getRestPing().queue(ping -> event.reply("Gateway Ping: " + event.getJDA().getGatewayPing() + "ms\nDiscord API Ping: " + ping + "ms").queue());
     }
 }

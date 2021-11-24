@@ -3,13 +3,10 @@ package com.wiilink24.bot.commands.moderation;
 import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 import java.sql.SQLException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Strike command

@@ -1,12 +1,8 @@
 package com.wiilink24.bot.commands.misc;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.wiilink24.bot.commands.Categories;
-import com.wiilink24.bot.utils.SearcherUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  * Avatar command
@@ -14,35 +10,20 @@ import net.dv8tion.jda.api.entities.User;
  * @author Sketch
  */
 
-public class Avatar extends Command {
-    public Avatar() {
-        this.name = "avatar";
-        this.category = Categories.MISC;
-        this.arguments = "Optional - [username]";
-        this.help = "Displays your avatar or the specified users.";
-        this.aliases = new String[]{"avy"};
-    }
+public class Avatar {
+    public Avatar() {}
 
-    @Override
-    protected void execute(CommandEvent event) {
-        event.async(() ->
-        {
-            Member member = SearcherUtil.findMember(event, event.getArgs());
-            if(member == null)
-                return;
+    public void avatar(SlashCommandEvent event) {
+        User user = event.getUser();
+        if (!event.getOptionsByName("user").isEmpty()) {
+            user = event.getOptionsByName("user").get(0).getAsUser();
+        }
 
-            User user = member.getUser();
-
-            display_avatar(event, user);
-        });
-    }
-
-    private void display_avatar(CommandEvent event, User user) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setAuthor(user.getName(), null, user.getEffectiveAvatarUrl())
                 .setImage(user.getEffectiveAvatarUrl());
 
-        event.reply(embed.build());
+        event.replyEmbeds(embed.build()).queue();
     }
 }

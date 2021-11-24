@@ -1,10 +1,8 @@
 package com.wiilink24.bot.commands.misc;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.wiilink24.bot.commands.Categories;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,56 +19,43 @@ import java.util.Arrays;
  * @author Sketch
  */
 
-public class GameTDB extends Command {
+public class GameTDB {
     private final OkHttpClient httpClient;
 
     public GameTDB() {
-        this.name = "gametdb";
-        this.category = Categories.MISC;
-        this.arguments = "[console] [titleID]";
-        this.help = "Grabs game data from the GameTDB website. Enter the console and titleID to get started.";
         this.httpClient = new OkHttpClient();
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        event.async(() -> {
-            String[] args = event.getArgs().split("\\s");
-            String link = String.format("https://www.gametdb.com/%s/%s", args[0], args[1]);
+    public void gameTDB(SlashCommandEvent event) {
+        String console = event.getOptionsByName("console").get(0).getAsString();
+        String gameId = event.getOptionsByName("gameid").get(0).getAsString();
+        String link = String.format("https://www.gametdb.com/%s/%s", console, gameId);
 
-            Request request = new Request.Builder().url(link).build();
-            httpClient.newCall(request).enqueue(new Callback()
-            {
-                @Override
-                public void onFailure(Call call, IOException e)
-                {
-                    event.replyError("There is a server error on GameTDB's end.");
-                }
+        event.deferReply().queue();
 
-                @Override
-                public void onResponse(Call call, Response response)
-                {
-                    if(response.code() == 404)
-                    {
-                        event.replyError("The requested game does not exist.");
-                        return;
-                    }
-
-                    if(!(response.isSuccessful()))
-                    {
-                        onFailure(call, new IOException("Server error: HTTP Code " + response.code()));
-                        return;
-                    }
-
-                    displayGame(event, link);
-                }
-            });
-        });
-    }
-
-    private void displayGame(CommandEvent event, String link) {
+        Request request = new Request.Builder().url(link).build();
         try {
-            String[] args = event.getArgs().split("\\s");
+            Response response = httpClient.newCall(request).execute();
+
+            switch (response.code()) {
+                case 200 -> {
+                    if (displayGame(event, link) != null) {
+                        event.replyEmbeds(displayGame(event, link).build()).queue();
+                    }
+                }
+                case 404 -> event.reply("The requested game does not exist.").setEphemeral(true).queue();
+                default -> event.reply("There is a server error on GameTDB's end.").setEphemeral(true).queue();
+            }
+            response.close();
+        } catch (IOException e) {
+            Sentry.captureException(e);
+        }
+    }
+    
+    private EmbedBuilder displayGame(SlashCommandEvent event, String link) {
+        try {
+            String console = event.getOptionsByName("console").get(0).getAsString();
+            String gameID = event.getOptionsByName("gameid").get(0).getAsString();
             Document doc = Jsoup.connect(link).get();
             Element table = doc.select("table.GameData").first();
             Elements rows = table.select("td.notranslate");
@@ -85,16 +70,17 @@ public class GameTDB extends Command {
             EmbedBuilder embed = new EmbedBuilder()
                     .setTitle(data[2])
                     .setDescription(data[4])
-                    .setImage(getImage(args[0].toLowerCase(), args[1]))
+                    .setImage(getImage(console.toLowerCase(), gameID))
                     .setColor(0x00FF00);
 
-            event.reply(embed.build());
+            return embed;
         } catch (IOException e) {
             Sentry.captureException(e);
         }
+        return null;
     }
 
-    String getImage(String system, String game_id) {
+    private String getImage(String system, String game_id) {
         String image_url = "";
         char[] region = game_id.toCharArray();
         String image = "https://art.gametdb.com/%s/cover/%s/%s.png";

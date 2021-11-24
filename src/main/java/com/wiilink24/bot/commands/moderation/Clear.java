@@ -1,19 +1,13 @@
 package com.wiilink24.bot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.wiilink24.bot.Bot;
-import com.wiilink24.bot.commands.Categories;
-import com.wiilink24.bot.events.SlashCommandListener;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Clear command

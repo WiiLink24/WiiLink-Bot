@@ -2,13 +2,9 @@ package com.wiilink24.bot.utils;
 
 import com.wiilink24.bot.Bot;
 import me.bramhaag.owo.OwO;
-import me.bramhaag.owo.OwOFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 public class WadUtil {
     private OwO owo;

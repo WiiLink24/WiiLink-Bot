@@ -69,11 +69,6 @@ public class MessageCache
             return attachments;
         }
 
-        public User getAuthor(ShardManager shardManager)
-        {
-            return shardManager.getUserById(author);
-        }
-
         public String getUsername()
         {
             return username;
@@ -97,16 +92,6 @@ public class MessageCache
             if (g == null)
                 return null;
             return g.getTextChannelById(channel);
-        }
-
-        public long getTextChannelId()
-        {
-            return channel;
-        }
-
-        public TextChannel getTextChannel(Guild guild)
-        {
-            return guild.getTextChannelById(channel);
         }
 
         public Guild getGuild(ShardManager shardManager)

@@ -1,11 +1,9 @@
 package com.wiilink24.bot.commands.misc;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.wiilink24.bot.commands.Categories;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.time.format.DateTimeFormatter;
@@ -16,21 +14,16 @@ import java.time.format.DateTimeFormatter;
  * @author Sketch
  */
 
-public class ServerInfo extends Command {
-    public ServerInfo() {
-        this.name = "serverinfo";
-        this.category = Categories.MISC;
-        this.help = "Display's the servers info";
-    }
+public class ServerInfo {
+    public ServerInfo() {}
 
-    @Override
-    protected void execute(CommandEvent event) {
+    public void serverInfo(SlashCommandEvent event) {
         Guild guild = event.getGuild();
 
         String features = "";
         features = guild.getFeatures().stream().map(feature -> " " + feature + ",").reduce(features, String::concat);
 
-        // For reasons unknown to me, "net.dv8tion.jda.api.entities.Guild.getOwner()" always returns null.
+        // For reasons unknown to me, "net.dv8tion.jda.api.entities.Guild.getOwner()" always returns null even though I cache owners.
         // I assume lazy loading is the fault as "net.dv8tion.jda.api.entities.Guild.retrieveOwner()" works
         RestAction<String> owner =  guild.retrieveOwner().map(Member::getAsMention);
 
@@ -50,7 +43,7 @@ public class ServerInfo extends Command {
                                 + "**\n:white_small_square: Features: **" + features + "**",
                         false);
 
-        event.reply(embed.build());
+        event.replyEmbeds(embed.build()).queue();
     }
 }
 

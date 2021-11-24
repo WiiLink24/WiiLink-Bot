@@ -44,6 +44,11 @@ public class Listener implements EventListener {
         {
             Message message = ((GuildMessageReceivedEvent)event).getMessage();
 
+            if(message.getAuthor().getId().equals("388050788402069506") || message.getAuthor().getId().equals("557990471683801099") || message.getAuthor().getId().equals("910688966947266594")) {
+                message.delete().queue();
+                return;
+            }
+
             if (message.getGuild().getId().equals(bot.wiiLinkServerId())) {
                 if(!message.getAuthor().isBot())
                 {

@@ -1,8 +1,5 @@
 package com.wiilink24.bot.commands.misc;
 
-import com.google.protobuf.ByteString;
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
@@ -10,18 +7,13 @@ import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageSource;
-import com.wiilink24.bot.commands.Categories;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Command that pulls text from images.
@@ -30,41 +22,18 @@ import java.util.concurrent.TimeUnit;
  * @author Sketch
  */
 
-public class OCR extends Command {
-    public OCR() {
-        this.name = "ocr";
-        this.arguments = "[url]";
-        this.category = Categories.MISC;
-        this.guildOnly = false;
-        this.help = "Grabs text from the specified image url.";
-    }
+public class OCR {
+    public OCR() {}
 
-    @Override
-    protected void execute(CommandEvent event) {
+    public void ocr(SlashCommandEvent event) {
         try {
+            event.deferReply().queue();
             List<AnnotateImageRequest> requests = new ArrayList<>();
             Image img;
 
-            if (Objects.equals(event.getArgs(), "")) {
-                Message.Attachment attachment = event.getMessage().getAttachments().get(0);
-                if (!attachment.isImage()) {
-                    event.replyError("Please only pass images to the OCR command.");
-                    return;
-                }
+            ImageSource imgSource = ImageSource.newBuilder().setImageUri(event.getOptionsByName("uri").get(0).getAsString()).build();
+            img = Image.newBuilder().setSource(imgSource).build();
 
-                File file = new File("img.png");
-                attachment.downloadToFile(file);
-
-                // Sleep for 2 seconds to give enough time to save the image
-                TimeUnit.SECONDS.sleep(2);
-
-                ByteString imgBytes = ByteString.readFrom(new FileInputStream("img.png"));
-                img = Image.newBuilder().setContent(imgBytes).build();
-                file.delete();
-            } else {
-                ImageSource imgSource = ImageSource.newBuilder().setImageUri(event.getArgs()).build();
-                img = Image.newBuilder().setSource(imgSource).build();
-            }
 
             Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
             AnnotateImageRequest request =
@@ -78,6 +47,7 @@ public class OCR extends Command {
                 for (AnnotateImageResponse res : responses) {
                     if (res.hasError()) {
                         System.out.format("Error: %s%n", res.getError().getMessage());
+                        event.getHook().sendMessage("Error: " + res.getError().getMessage()).queue();
                         return;
                     }
 
@@ -88,11 +58,11 @@ public class OCR extends Command {
                             .setDescription(String.format("```%s```",res.getTextAnnotationsList().get(0).getDescription()));
 
                     client.close();
-                    event.reply(embed.build());
+                    event.getHook().sendMessageEmbeds(embed.build()).queue();
                 }
             }
-        } catch (IOException | InterruptedException e) {
-            event.replyError("An error has occurred: " + e.getMessage());
+        } catch (IOException e) {
+            event.getHook().sendMessage("An error has occurred: " + e.getMessage()).setEphemeral(true).queue();
             Sentry.captureException(e);
         }
     }

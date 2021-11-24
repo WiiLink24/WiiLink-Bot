@@ -1,12 +1,11 @@
 package com.wiilink24.bot.commands.misc;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.wiilink24.bot.commands.Categories;
-import com.wiilink24.bot.utils.SearcherUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
+import java.awt.*;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -15,45 +14,47 @@ import java.time.format.DateTimeFormatter;
  * @author Sketch
  */
 
-public class Userinfo extends Command {
-    public Userinfo() {
-        this.name = "userinfo";
-        this.category = Categories.MISC;
-        this.help = "Get information for a user";
-        this.arguments = "[user]";
+public class Userinfo {
+    public Userinfo() {}
 
-    }
+    public void userInfo(SlashCommandEvent event) {
+        Member member = event.getMember();
+        User user = event.getUser();
 
-    @Override
-    protected void execute(CommandEvent event) {
-        event.async(() -> {
-            Member member = SearcherUtil.findMember(event, event.getArgs());
-            if(member == null)
-                return;
-
-            getInfo(event, member);
-        });
-    }
-
-    private void getInfo(CommandEvent event, Member member) {
-        String roles = "";
-        roles = member.getRoles().stream().map(role -> " "+role.getAsMention()).reduce(roles, String::concat);
-
-        String nick = "None";
-        if (!member.getNickname().isEmpty()) {
-            nick = member.getNickname();
+        if (!event.getOptionsByName("user").isEmpty()) {
+            member = event.getOptionsByName("user").get(0).getAsMember();
+            user = event.getOptionsByName("user").get(0).getAsUser();
         }
-        
-        EmbedBuilder embed = new EmbedBuilder()
-                .setTitle(String.format("Info about %s #%s", member.getUser().getName(), member.getUser().getDiscriminator()))
-                .setColor(member.getColor())
-                .setThumbnail(member.getUser().getEffectiveAvatarUrl())
-                .addField("User ID", member.getId(), false)
-                .addField("Nickname", nick, false)
-                .addField("Account Creation", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
-                .addField("Join Date", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
-                .addField(String.format("Roles [%s]", member.getRoles().toArray().length), roles, false);
 
-        event.reply(embed.build());
+        Color color = Color.GREEN;
+        String joinDate = "Not in server";
+        int numOfRoles = 0;
+
+        String roles = "Not in server";
+        String nick = "None";
+        if (member != null) {
+            roles = "";
+            roles = member.getRoles().stream().map(role -> " "+role.getAsMention()).reduce(roles, String::concat);
+
+            if (member.getNickname() != null) {
+                nick = member.getNickname();
+            }
+
+            color = member.getColor();
+            joinDate = member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME);
+            numOfRoles = member.getRoles().toArray().length;
+        }
+
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle(String.format("Info about %s #%s", user.getName(), user.getDiscriminator()))
+                .setColor(color)
+                .setThumbnail(user.getEffectiveAvatarUrl())
+                .addField("User ID", user.getId(), false)
+                .addField("Nickname", nick, false)
+                .addField("Account Creation", user.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
+                .addField("Join Date", joinDate, false)
+                .addField(String.format("Roles [%s]", numOfRoles), roles, false);
+
+        event.replyEmbeds(embed.build()).queue();
     }
 }

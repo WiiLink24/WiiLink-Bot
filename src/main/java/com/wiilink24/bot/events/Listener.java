@@ -24,14 +24,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Listener implements EventListener {
-    private final Bot bot;
     private final String modLog;
     private final MessageCache cache;
     private final String timestamp;
     private final Database database;
 
-    public Listener(Bot bot) {
-        this.bot = bot;
+    public Listener() {
         this.modLog = Bot.modLog();
         this.cache = new MessageCache();
         this.timestamp = Bot.timestamp();
@@ -49,7 +47,7 @@ public class Listener implements EventListener {
                 return;
             }
 
-            if (message.getGuild().getId().equals(bot.wiiLinkServerId())) {
+            if (message.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 if(!message.getAuthor().isBot())
                 {
                     this.cache.putMessage(message);
@@ -117,7 +115,7 @@ public class Listener implements EventListener {
         {
             GuildMessageDeleteEvent delete = (GuildMessageDeleteEvent) event;
 
-            if (delete.getGuild().getId().equals(bot.wiiLinkServerId())) {
+            if (delete.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 MessageCache.CachedMessage message = this.cache.pullMessage(delete.getGuild(), delete.getMessageIdLong());
 
                 if (message != null) {
@@ -144,7 +142,7 @@ public class Listener implements EventListener {
         else if (event instanceof GuildMessageUpdateEvent) {
             Message message = ((GuildMessageUpdateEvent)event).getMessage();
 
-            if (message.getGuild().getId().equals(bot.wiiLinkServerId())) {
+            if (message.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 if (!message.getAuthor().isBot()) {
                     // Store old message in a variable then log the new message
                     MessageCache.CachedMessage old = this.cache.putMessage(message);
@@ -179,7 +177,7 @@ public class Listener implements EventListener {
         else if (event instanceof GuildMemberJoinEvent) {
             GuildMemberJoinEvent member = (GuildMemberJoinEvent) event;
 
-            if (member.getGuild().getId().equals(bot.wiiLinkServerId())) {
+            if (member.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 String message = timestamp
                         + " :inbox_tray: **"
                         + member.getUser().getName()
@@ -196,7 +194,7 @@ public class Listener implements EventListener {
         else if (event instanceof GuildMemberRemoveEvent) {
             GuildMemberRemoveEvent member = (GuildMemberRemoveEvent) event;
 
-            if (member.getGuild().getId().equals(bot.wiiLinkServerId())) {
+            if (member.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 String message = timestamp
                         + " :outbox_tray: **"
                         + member.getUser().getName()

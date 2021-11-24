@@ -43,6 +43,6 @@ public class Clear {
 
         // Log to server logs
         EmbedBuilder embed = new EmbedBuilder().setTitle(event.getUser().getName() + "#" + event.getUser().getDiscriminator() + " cleared " + messagesToClear + " messages");
-        event.getJDA().getTextChannelById(Bot.modLog()).sendMessageEmbeds(embed.build()).complete();
+        event.getJDA().getTextChannelById(Bot.serverLog()).sendMessageEmbeds(embed.build()).complete();
     }
 }

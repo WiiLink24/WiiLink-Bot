@@ -60,7 +60,7 @@ public class Ban {
                             + "`";
 
                     Bot.sendDM(user, "You were banned in WiiLink for **`" + finalReason + "`**").queue();
-                    event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(topMessage).queue();
+                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(topMessage).queue();
                 }, failure -> {
                     event.reply("Failed to ban the requested user.").queue();
                 }

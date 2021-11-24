@@ -52,6 +52,6 @@ public class Kick {
         Bot.sendDM(member.getUser(), "You were kicked from WiiLink for `" + reason + "`").complete();
         event.getGuild().kick(member).complete();
 
-        event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(message).complete();
+        event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(message).complete();
     }
 }

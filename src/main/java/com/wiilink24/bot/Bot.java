@@ -44,7 +44,7 @@ public class Bot {
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.VOICE_STATE)
-                .addEventListeners(new UploadWad(), new Ticket(), new Listener(this), new ButtonListener(this), new SlashCommandListener(this))
+                .addEventListeners(new UploadWad(), new Ticket(), new Listener(), new ButtonListener(this), new SlashCommandListener(this))
                 .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES);
 
         builder.build();
@@ -59,6 +59,8 @@ public class Bot {
     public static String modLog() {
         return "755522585864962099";
     }
+
+    public static String serverLog() { return "913181713977458718";}
 
     public static String patchesChannel() {
         return "894316256788893706";

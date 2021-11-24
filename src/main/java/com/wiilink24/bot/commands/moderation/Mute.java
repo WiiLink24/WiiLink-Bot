@@ -73,14 +73,14 @@ public class Mute {
                 success -> {
                     event.reply("Successfully muted" + " **" + member.getUser().getName() + "**#" + member.getUser().getDiscriminator() + " for " + finalTimeString + ".").queue();
                     Bot.sendDM(member.getUser(), "You have been muted for " + finalTimeString + " in WiiLink.").queue();
-                    event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(message).queue();
+                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(message).queue();
 
                     new Timer().schedule(
                             new TimerTask() {
                                 @Override
                                 public void run() {
                                     event.getGuild().removeRoleFromMember(member.getUser().getId(), mutedRole).queue();
-                                    event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(unmuteText).queue();
+                                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(unmuteText).queue();
                                 }
                             }, finalTime
                     );

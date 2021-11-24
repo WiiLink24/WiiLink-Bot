@@ -58,7 +58,7 @@ public class Strike {
 
         event.reply("Successfully gave " + strikes + " strikes to **" + user.getName() + "**#" + user.getDiscriminator()).queue();
         Bot.sendDM(user, "You were given " + strikes + " strikes in WiiLink for `" + reason + "`").queue();
-        event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(
+        event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(
                 Bot.timestamp()
                         + " :triangular_flag_on_post: **"
                         + event.getUser().getName()

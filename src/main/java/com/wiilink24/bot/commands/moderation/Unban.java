@@ -38,7 +38,7 @@ public class Unban {
                             + user.getId()
                             + ")\n";
 
-                    event.getJDA().getTextChannelById(Bot.modLog()).sendMessage(topMessage).queue();
+                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(topMessage).queue();
                 }, failure -> {
                     event.reply("Failed to unban the requested user.").queue();
                 }

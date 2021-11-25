@@ -30,7 +30,6 @@ public class ServerInfo {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Server Information")
                 .setThumbnail(guild.getIconUrl())
-                .setImage(guild.getSplashUrl() + "?size=1024")
                 .addField(String.format("**%s**", guild.getName()),
                         ":white_small_square: ID: **" + guild.getId()
                                 + "**\n:white_small_square: Owner: **" + owner.complete()
@@ -42,6 +41,10 @@ public class ServerInfo {
                                 + "\n:white_small_square: Verification: **" + guild.getVerificationLevel()
                                 + "**\n:white_small_square: Features: **" + features + "**",
                         false);
+
+        if (guild.getSplashUrl() != null) {
+            embed.setImage(guild.getSplashUrl() + "?size=1024");
+        }
 
         event.replyEmbeds(embed.build()).queue();
     }

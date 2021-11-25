@@ -63,8 +63,8 @@ public class GameTDB {
                         Sentry.captureException(e);
                     }
                 }
-                case 404 -> event.reply("The requested game does not exist.").setEphemeral(true).queue();
-                default -> event.reply("There is a server error on GameTDB's end.").setEphemeral(true).queue();
+                case 404 -> event.getHook().sendMessage("The requested game does not exist.").setEphemeral(true).queue();
+                default -> event.getHook().sendMessage("There is a server error on GameTDB's end.").setEphemeral(true).queue();
             }
             response.close();
         } catch (IOException e) {

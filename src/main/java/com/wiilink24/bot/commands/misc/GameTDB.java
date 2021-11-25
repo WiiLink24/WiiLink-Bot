@@ -39,8 +39,28 @@ public class GameTDB {
 
             switch (response.code()) {
                 case 200 -> {
-                    if (displayGame(event, link) != null) {
-                        event.replyEmbeds(displayGame(event, link).build()).queue();
+                    try {
+                        String gameID = event.getOptionsByName("gameid").get(0).getAsString();
+                        Document doc = Jsoup.connect(link).get();
+                        Element table = doc.select("table.GameData").first();
+                        Elements rows = table.select("td.notranslate");
+
+                        String[] data = {};
+
+                        for (Element i : rows) {
+                            data = Arrays.copyOf(data, data.length + 1);
+                            data[data.length - 1] = i.text();
+                        }
+
+                        EmbedBuilder embed = new EmbedBuilder()
+                                .setTitle(data[2])
+                                .setDescription(data[4])
+                                .setImage(getImage(console.toLowerCase(), gameID))
+                                .setColor(0x00FF00);
+
+                        event.getHook().sendMessageEmbeds(embed.build()).queue();
+                    } catch (IOException e) {
+                        Sentry.captureException(e);
                     }
                 }
                 case 404 -> event.reply("The requested game does not exist.").setEphemeral(true).queue();
@@ -50,34 +70,6 @@ public class GameTDB {
         } catch (IOException e) {
             Sentry.captureException(e);
         }
-    }
-    
-    private EmbedBuilder displayGame(SlashCommandEvent event, String link) {
-        try {
-            String console = event.getOptionsByName("console").get(0).getAsString();
-            String gameID = event.getOptionsByName("gameid").get(0).getAsString();
-            Document doc = Jsoup.connect(link).get();
-            Element table = doc.select("table.GameData").first();
-            Elements rows = table.select("td.notranslate");
-
-            String[] data = {};
-
-            for (Element i : rows) {
-                data = Arrays.copyOf(data, data.length + 1);
-                data[data.length - 1] = i.text();
-            }
-
-            EmbedBuilder embed = new EmbedBuilder()
-                    .setTitle(data[2])
-                    .setDescription(data[4])
-                    .setImage(getImage(console.toLowerCase(), gameID))
-                    .setColor(0x00FF00);
-
-            return embed;
-        } catch (IOException e) {
-            Sentry.captureException(e);
-        }
-        return null;
     }
 
     private String getImage(String system, String game_id) {

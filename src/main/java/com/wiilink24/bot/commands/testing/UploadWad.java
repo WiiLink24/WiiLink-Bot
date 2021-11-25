@@ -45,6 +45,9 @@ public class UploadWad extends ListenerAdapter {
                 event.getChannel().sendMessage("No WAD filepath, title and name provided!").queue();
                 event.getChannel().sendMessage("\"Usage: `/uploadwad filename: test.wad title: Test v1 description: This is v1 of Test.`\"").queue();
             } else {
+                // Now remove /uploadwad
+                arguments[0] = "";
+
                 String filename = "";
                 String title = "";
                 String description = "";

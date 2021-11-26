@@ -4,14 +4,24 @@ import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import com.wiilink24.bot.utils.WadUtil;
 import io.sentry.Sentry;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.Component;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ButtonListener extends ListenerAdapter {
     private Database database;
@@ -65,6 +75,54 @@ public class ButtonListener extends ListenerAdapter {
                 event.getHook()
                         .sendMessage("A database error occurred. Please contact a developer.")
                         .queue();
+            }
+        }
+        else if (passedId.startsWith("news_")) {
+            try {
+                // Trim off the first 5 characters (`news_`).
+                String news = passedId.substring(5);
+                String userId = news.substring(2);
+                news = news.replace("_" + userId, "");
+
+                int newsId = Integer.parseInt(news);
+
+                if (!event.getUser().getId().equals(userId)) {
+                    event.reply("You cannot change the page if you didn't invoke the command!").setEphemeral(true).queue();
+                } else {
+                    List<Button> buttons = new ArrayList<>();
+                    buttons.add( Button.primary("news_" + (newsId - 1) + "_" + userId, "Previous"));
+                    buttons.add(Button.primary("news_" + (newsId + 1) + "_" + userId, "Next"));
+
+                    Document doc = Jsoup.connect("https://www.wiilink24.com/news").get();
+                    Element div = doc.select("div").get(3 + newsId);
+                    Element date = div.select("h1").first();
+                    Element title = div.select("h3").first();
+                    Element body = div.select("p").first();
+                    Element authorNode = div.select("p").last();
+
+                    String author = authorNode.text().replace("—", "");
+                    author = author.replaceAll("\\s", "");
+
+                    // Now we determine if there are news articles before or after the current one
+                    if (doc.select("div").get(4 + newsId).select("h3").first() == null) {
+                        buttons.remove(1);
+                    }
+                    if (newsId == 0) {
+                        buttons.remove(0);
+                    }
+
+                    EmbedBuilder embed = new EmbedBuilder()
+                            .setTitle(title.text())
+                            .setDescription(body.text() + "\n\nTo read the full news article, go to https://www.wiilink24.com/news")
+                            .setFooter("Author: " + author + " | " + date.text(), null);
+
+                    event.deferEdit().queue();
+                    event.getMessage().editMessage(embed.build()).setActionRow(
+                            buttons
+                    ).queue();
+                }
+            } catch (IOException e) {
+                Sentry.captureException(e);
             }
         }
         else if (passedId.equals("discord_updates")) {

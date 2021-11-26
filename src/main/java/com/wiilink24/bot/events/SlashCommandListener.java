@@ -121,5 +121,8 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("userinfo")) {
             new Userinfo().userInfo(event);
         }
+        else if (event.getName().equals("news")) {
+            new News().news(event);
+        }
     }
 }

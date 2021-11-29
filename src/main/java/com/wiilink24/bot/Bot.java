@@ -3,6 +3,7 @@ package com.wiilink24.bot;
 import com.wiilink24.bot.commands.moderation.Ticket;
 import com.wiilink24.bot.commands.testing.UploadWad;
 import com.wiilink24.bot.events.ButtonListener;
+import com.wiilink24.bot.events.SelectionBoxListener;
 import com.wiilink24.bot.events.SlashCommandListener;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDABuilder;
@@ -43,8 +44,8 @@ public class Bot {
         JDABuilder builder = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
-                .enableCache(CacheFlag.VOICE_STATE)
-                .addEventListeners(new UploadWad(), new Ticket(), new Listener(), new ButtonListener(this), new SlashCommandListener(this))
+                .enableCache(CacheFlag.VOICE_STATE, CacheFlag.ROLE_TAGS)
+                .addEventListeners(new UploadWad(), new Ticket(), new Listener(), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener())
                 .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES);
 
         builder.build();

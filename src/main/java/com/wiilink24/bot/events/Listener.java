@@ -46,6 +46,14 @@ public class Listener implements EventListener {
                 message.delete().queue();
                 return;
             }
+            
+            if(message.getAuthor().getId().equals("514951634812665856")) {
+                   EmbedBuilder embed = new EmbedBuilder()
+                   .setAuthor(message.getAuthor().getName(), null, message.getAuthor().getEffectiveAvatarUrl())
+                   .addField("Who Asked");
+                   message.getChannel().sendMessageEmbeds(embed.build()).queue();
+                   return;
+            }
 
             if (message.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 if(!message.getAuthor().isBot())

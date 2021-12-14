@@ -13,9 +13,9 @@ public class SelectionBoxListener extends ListenerAdapter {
     public void onSelectionMenu(@Nonnull SelectionMenuEvent event) {
         if (event.getComponentId().equals("help")) {
             // I hate you JDA for making the selection like this
+            EmbedBuilder embed = new EmbedBuilder();
             if (event.getValues().get(0).equals("misc")) {
-                EmbedBuilder embed = new EmbedBuilder()
-                        .setTitle("Miscellaneous Commands")
+                embed.setTitle("Miscellaneous Commands")
                         .setDescription("General commands all users can run. All of these commands are slash commands. Arguments wrapped in `<>` are optional while `[]` is required.")
                         .addField("About", "About WiiLink Bot. Takes no arguments", false)
                         .addField("AFK", "Sets your status to AFK. Whenever you are mentioned the person who mentioned will be alerted of your AFK status and reason. You will get a DM with the message content and author. Usage: `/afk <reason>`", false)
@@ -33,6 +33,25 @@ public class SelectionBoxListener extends ListenerAdapter {
                         .addField("Translate", "Translates text into the specified language by using DeepL. Usage: `/translate [text]`", false)
                         .addField("User Info", "Gets information about you or the specified user. Usage: `/userinfo <user>`", false);
 
+
+                event.editMessageEmbeds(embed.build()).queue();
+            } else if (event.getValues().get(0).equals("music")) {
+                embed.setTitle("Music Commands")
+                        .setDescription("Commands that control the music player function of the bot.")
+                        .addField("Play", "Plays audio from the specified URL or mp3 file. Usage: `/play [url/file]`", false)
+                        .addField("Pause", "Pauses the current track. Usage: `/pause`", false)
+                        .addField("Stop", "Stops playing the current track. Usage: `/stop`", false)
+                        .addField("Seek", "Moves the track to the specified point in M:S format. Usage: `/seek [time]`", false)
+                        .addField("Now Playing", "Shows the data and state of the current track. Usage: `/np`", false)
+                        .addField("Restart", "Restarts the current track. Usage: `/restart`", false)
+                        .addField("Next", "Plays the next track in queue. Usage: `/next`", false)
+                        .addField("Previous", "Plays the previous track again. Usage: `/previous`", false)
+                        .addField("Queue", "Shows the upcoming tracks as well as the currently playing track. Usage: `/queue`", false)
+                        .addField("Shuffle", "Shuffles the songs in the queue. Usage: `/shuffle`", false)
+                        .addField("Connect", "Connects the bot the the voice channel you are in. Usage: `/connect`", false)
+                        .addField("Disconnect", "Disconnects the bot from the voice channel and clears the queue. Usage: `/disconnect`", false)
+                        .addField("Volume", "Adjusts the player's volume. Usage: `/volume [level]`", false)
+                        .addField("EQ", "Adjusts the equalizer for the current track. Usage: `/eq [preset]`", false);
 
                 event.editMessageEmbeds(embed.build()).queue();
             }

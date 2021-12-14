@@ -28,6 +28,6 @@ public class Help {
 
         event.replyEmbeds(embed.build()).addActionRow(
             selectionMenu.build()
-        ).queue();
+        ).setEphemeral(true).queue();
     }
 }

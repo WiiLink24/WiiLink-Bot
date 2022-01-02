@@ -18,17 +18,16 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bot {
     static BasicDataSource connectionPool;
-    public static BufferedReader antiSwearWords;
+    public static List<String> antiSwearWords = new ArrayList<>();
     Config config = new Config();
 
     void run() throws LoginException {
@@ -47,6 +46,9 @@ public class Bot {
             }
         );
 
+        // Load the Anti-Swear
+        getAntiSwear();
+
         JDABuilder builder = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
@@ -55,18 +57,23 @@ public class Bot {
                 .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES);
 
         builder.build();
+    }
 
+    private static void getAntiSwear() {
+        // Load the Anti-Swear words
         try {
-            antiSwearWords = getAntiSwear();
-        } catch (FileNotFoundException e) {
+            File file = new File("./censor.txt");
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            String st;
+            while ((st = reader.readLine()) != null) {
+                antiSwearWords.add(st);
+            }
+            System.out.println(antiSwearWords);
+        } catch (IOException e) {
             // Should never occur in production
             Sentry.captureException(e);
         }
-    }
-
-    private static BufferedReader getAntiSwear() throws FileNotFoundException {
-        File file = new File("./censor.txt");
-        return new BufferedReader(new FileReader(file));
     }
 
     // We return a RestAction because depending on use we can complete or queue

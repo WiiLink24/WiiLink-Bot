@@ -46,22 +46,18 @@ public class Listener implements EventListener {
             Message message = ((GuildMessageReceivedEvent)event).getMessage();
 
             // Censor feature!
-            try {
-                String st;
-                while ((st = Bot.antiSwearWords.readLine()) != null) {
-                    Pattern pattern = Pattern.compile("(?i)" + st, Pattern.CASE_INSENSITIVE);
-                    Matcher matcher = pattern.matcher(message.getContentRaw());
-                    boolean match = matcher.find();
+            for (String str : Bot.antiSwearWords) {
+                Pattern pattern = Pattern.compile("(?i)" + str, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(message.getContentRaw());
+                boolean match = matcher.find();
 
-                    if (match) {
-                        Thread.sleep(500);
-                        message.delete().queue();
-                    }
+                if (match) {
+                    message.delete().queue();
+                    return;
                 }
 
-            } catch (IOException | InterruptedException e) {
-                Sentry.captureException(e);
             }
+
 
             if (message.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 if(!message.getAuthor().isBot())

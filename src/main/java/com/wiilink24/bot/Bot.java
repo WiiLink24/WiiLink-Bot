@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import com.wiilink24.bot.events.Listener;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -17,12 +18,17 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 public class Bot {
     static BasicDataSource connectionPool;
+    public static BufferedReader antiSwearWords;
     Config config = new Config();
 
     void run() throws LoginException {
@@ -49,10 +55,22 @@ public class Bot {
                 .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES);
 
         builder.build();
+
+        try {
+            antiSwearWords = getAntiSwear();
+        } catch (FileNotFoundException e) {
+            // Should never occur in production
+            Sentry.captureException(e);
+        }
+    }
+
+    private static BufferedReader getAntiSwear() throws FileNotFoundException {
+        File file = new File("./censor.txt");
+        return new BufferedReader(new FileReader(file));
     }
 
     // We return a RestAction because depending on use we can complete or queue
-    public static RestAction sendDM(User user, String message) {
+    public static RestAction<Message> sendDM(User user, String message) {
         return user.openPrivateChannel()
                 .flatMap(privateChannel -> privateChannel.sendMessage(message));
     }

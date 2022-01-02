@@ -19,9 +19,12 @@ import net.dv8tion.jda.api.events.user.UserTypingEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 
 import java.awt.*;
+import java.io.*;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Listener implements EventListener {
     private final String modLog;
@@ -41,6 +44,24 @@ public class Listener implements EventListener {
         if (event instanceof GuildMessageReceivedEvent)
         {
             Message message = ((GuildMessageReceivedEvent)event).getMessage();
+
+            // Censor feature!
+            try {
+                String st;
+                while ((st = Bot.antiSwearWords.readLine()) != null) {
+                    Pattern pattern = Pattern.compile("(?i)" + st, Pattern.CASE_INSENSITIVE);
+                    Matcher matcher = pattern.matcher(message.getContentRaw());
+                    boolean match = matcher.find();
+
+                    if (match) {
+                        Thread.sleep(500);
+                        message.delete().queue();
+                    }
+                }
+
+            } catch (IOException | InterruptedException e) {
+                Sentry.captureException(e);
+            }
 
             if (message.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 if(!message.getAuthor().isBot())
@@ -85,10 +106,8 @@ public class Listener implements EventListener {
             }
         }
         // For the AFK command
-        else if (event instanceof UserTypingEvent)
+        else if (event instanceof UserTypingEvent typing)
         {
-            UserTypingEvent typing = (UserTypingEvent) event;
-
             User user = typing.getUser();
 
             // Query the database and find if the user is AFK
@@ -106,10 +125,7 @@ public class Listener implements EventListener {
                 Sentry.captureException(e);
             }
         }
-        else if (event instanceof GuildMessageDeleteEvent)
-        {
-            GuildMessageDeleteEvent delete = (GuildMessageDeleteEvent) event;
-
+        else if (event instanceof GuildMessageDeleteEvent delete) {
             if (delete.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 MessageCache.CachedMessage message = this.cache.pullMessage(delete.getGuild(), delete.getMessageIdLong());
 
@@ -169,9 +185,7 @@ public class Listener implements EventListener {
                 }
             }
         }
-        else if (event instanceof GuildMemberJoinEvent) {
-            GuildMemberJoinEvent member = (GuildMemberJoinEvent) event;
-
+        else if (event instanceof GuildMemberJoinEvent member) {
             if (member.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 String message = timestamp
                         + " :inbox_tray: **"
@@ -186,9 +200,7 @@ public class Listener implements EventListener {
                 event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
             }
         }
-        else if (event instanceof GuildMemberRemoveEvent) {
-            GuildMemberRemoveEvent member = (GuildMemberRemoveEvent) event;
-
+        else if (event instanceof GuildMemberRemoveEvent member) {
             if (member.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 String message = timestamp
                         + " :outbox_tray: **"

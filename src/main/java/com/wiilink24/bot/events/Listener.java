@@ -143,6 +143,8 @@ public class Listener implements EventListener {
 
             // Check whether this message should be deleted under the anti-swear list.
             if (shouldBeCensored(message)) {
+                // Ensure the message's new content is cached.
+                this.cache.putMessage(message);
                 message.delete().queue();
                 return;
             }

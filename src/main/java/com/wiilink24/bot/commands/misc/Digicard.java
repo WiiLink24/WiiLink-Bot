@@ -38,6 +38,7 @@ public class Digicard  {
                 if(response.code() == 404)
                 {
                     event.reply("**" + finalUser.getAsTag() + "** does not have a Digicard!").setEphemeral(true).queue();
+                    response.close();
                     return;
                 }
 

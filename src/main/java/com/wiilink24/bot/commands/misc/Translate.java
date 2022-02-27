@@ -17,7 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +40,7 @@ public class Translate {
         params.add(new BasicNameValuePair("Text", text));
         params.add(new BasicNameValuePair("target_lang", language));
 
-        try {
-            post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            // This should never fail
-            Sentry.captureException(e);
-            e.printStackTrace();
-        }
+        post.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 
         try {
             HttpResponse response = httpClient.execute(post);
@@ -54,7 +48,7 @@ public class Translate {
 
             if (entity != null) {
                 // Now we parse the response which is a JSON
-                String jsonString = EntityUtils.toString(entity, "UTF-8");
+                String jsonString = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                 JSONObject jsonObject = new JSONObject(jsonString);
 
                 // DeepL decided to nest our data inside an array.

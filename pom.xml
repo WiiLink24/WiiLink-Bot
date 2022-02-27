@@ -160,6 +160,13 @@
             <version>2.9.0</version>
         </dependency>
 
+        <!-- HTTP requests -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
+        </dependency>
+
         <!-- Dev file uploading -->
         <dependency>
             <groupId>com.github.spotlightishere</groupId>

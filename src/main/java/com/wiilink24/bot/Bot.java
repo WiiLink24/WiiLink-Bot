@@ -86,7 +86,9 @@ public class Bot {
         return "755522585864962099";
     }
 
-    public static String serverLog() { return "913181713977458718";}
+    public static String serverLog() {
+        return "913181713977458718";
+    }
 
     public static String patchesChannel() {
         return "894316256788893706";
@@ -96,7 +98,13 @@ public class Bot {
         return "750591972044963850";
     }
     
-    public static String wiiLinkServerId() {return "750581992223146074";}
+    public static String wiiLinkServerId() {
+        return "750581992223146074";
+    }
+
+    public static String mutedRoleId() {
+        return "770836633419120650";
+    }
 
     public static String timestamp() {
         return DateTimeFormatter.ofPattern("'`['HH:mm:ss']`'").withZone(ZoneOffset.UTC).format(Instant.now());

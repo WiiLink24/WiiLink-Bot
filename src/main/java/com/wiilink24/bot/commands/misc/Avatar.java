@@ -2,7 +2,7 @@ package com.wiilink24.bot.commands.misc;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * Avatar command
@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 public class Avatar {
     public Avatar() {}
 
-    public void avatar(SlashCommandEvent event) {
+    public void avatar(SlashCommandInteractionEvent event) {
         User user = event.getUser();
         if (!event.getOptionsByName("user").isEmpty()) {
             user = event.getOptionsByName("user").get(0).getAsUser();

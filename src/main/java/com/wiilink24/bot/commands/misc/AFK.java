@@ -2,7 +2,7 @@ package com.wiilink24.bot.commands.misc;
 
 import com.wiilink24.bot.Database;
 import io.sentry.Sentry;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.sql.*;
 
@@ -19,7 +19,7 @@ public class AFK {
         this.database = new Database();
     }
 
-    public void afk(SlashCommandEvent event) {
+    public void afk(SlashCommandInteractionEvent event) {
         try {
             String userID = event.getUser().getId();
             boolean exists = database.doesExist(userID);

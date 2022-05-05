@@ -1,7 +1,7 @@
 package com.wiilink24.bot.commands.misc;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * Bot credits
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 public class Credits  {
     public Credits() {}
 
-    public void credits(SlashCommandEvent event) {
+    public void credits(SlashCommandInteractionEvent event) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setTitle("Credits", null)

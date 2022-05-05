@@ -2,7 +2,7 @@ package com.wiilink24.bot.commands.misc;
 
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class Mii {
     public Mii() {}
 
-    public void mii(SlashCommandEvent event) {
+    public void mii(SlashCommandInteractionEvent event) {
         String link;
         String entryNumber = event.getOptionsByName("argument").get(0).getAsString();
         // Check if the argument was a name or entry number

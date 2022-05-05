@@ -9,9 +9,9 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,7 +31,7 @@ public class ButtonListener extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonClick(ButtonClickEvent event) {
+    public void onButtonInteraction(ButtonInteractionEvent event) {
         String passedId = event.getComponentId();
         final Role discordUpdates = event.getGuild().getRoleById("785986443846615112");
         final Role videoUpdates = event.getGuild().getRoleById("785986569445310485");
@@ -115,7 +115,7 @@ public class ButtonListener extends ListenerAdapter {
                             .setFooter("Author: " + author + " | " + date.text(), null);
 
                     event.deferEdit().queue();
-                    event.getMessage().editMessage(embed.build()).setActionRow(
+                    event.getMessage().editMessageEmbeds(embed.build()).setActionRow(
                             buttons
                     ).queue();
                 }
@@ -129,13 +129,13 @@ public class ButtonListener extends ListenerAdapter {
             // Remove the role if the user has it
             for (Role role : member.getRoles()) {
                 if (role.getName().equals("Discord Updates")) {
-                    event.getGuild().removeRoleFromMember(member.getId(), discordUpdates).queue();
+                    event.getGuild().removeRoleFromMember(member, discordUpdates).queue();
                     event.reply("Successfully removed the Discord Updates role.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            event.getGuild().addRoleToMember(member.getId(), discordUpdates).queue();
+            event.getGuild().addRoleToMember(member, discordUpdates).queue();
 
             event.reply("Successfully added the Discord Updates role.").setEphemeral(true).queue();
         }
@@ -145,13 +145,13 @@ public class ButtonListener extends ListenerAdapter {
             // Remove the role if the user has it
             for (Role role : member.getRoles()) {
                 if (role.getName().equals("Video Updates")) {
-                    event.getGuild().removeRoleFromMember(member.getId(), videoUpdates).queue();
+                    event.getGuild().removeRoleFromMember(member, videoUpdates).queue();
                     event.reply("Successfully removed the Video Updates role.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            event.getGuild().addRoleToMember(member.getId(), videoUpdates).queue();
+            event.getGuild().addRoleToMember(member, videoUpdates).queue();
 
             event.reply("Successfully added the Video Updates role.").setEphemeral(true).queue();
         }
@@ -161,13 +161,13 @@ public class ButtonListener extends ListenerAdapter {
             // Remove the role if the user has it
             for (Role role : member.getRoles()) {
                 if (role.getName().equals("Game Night Updates")) {
-                    event.getGuild().removeRoleFromMember(member.getId(), gameNightUpdates).queue();
+                    event.getGuild().removeRoleFromMember(member, gameNightUpdates).queue();
                     event.reply("Successfully removed the Game Night Updates role.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            event.getGuild().addRoleToMember(member.getId(), gameNightUpdates).queue();
+            event.getGuild().addRoleToMember(member, gameNightUpdates).queue();
 
             event.reply("Successfully added the Game Night Updates role.").setEphemeral(true).queue();
         }
@@ -178,13 +178,13 @@ public class ButtonListener extends ListenerAdapter {
             // Remove the role if the user has it
             for (Role role : member.getRoles()) {
                 if (role.getName().equals("Content Updates")) {
-                    event.getGuild().removeRoleFromMember(member.getId(), contentUpdates).queue();
+                    event.getGuild().removeRoleFromMember(member, contentUpdates).queue();
                     event.reply("Successfully removed the Content Updates role.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            event.getGuild().addRoleToMember(member.getId(), contentUpdates).queue();
+            event.getGuild().addRoleToMember(member, contentUpdates).queue();
 
             event.reply("Successfully added the Content Updates role.").setEphemeral(true).queue();
         }
@@ -194,13 +194,13 @@ public class ButtonListener extends ListenerAdapter {
             // Remove the role if the user has it
             for (Role role : member.getRoles()) {
                 if (role.getName().equals("Related Project Updates")) {
-                    event.getGuild().removeRoleFromMember(member.getId(), relatedUpdates).queue();
+                    event.getGuild().removeRoleFromMember(member, relatedUpdates).queue();
                     event.reply("Successfully removed the Related Project Updates role.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            event.getGuild().addRoleToMember(member.getId(), relatedUpdates).queue();
+            event.getGuild().addRoleToMember(member, relatedUpdates).queue();
 
             event.reply("Successfully added the Related Project Updates role.").setEphemeral(true).queue();
         }
@@ -210,13 +210,13 @@ public class ButtonListener extends ListenerAdapter {
             // Remove the role if the user has it
             for (Role role : member.getRoles()) {
                 if (role.getName().equals("POTW Updates")) {
-                    event.getGuild().removeRoleFromMember(member.getId(), potwUpdates).queue();
+                    event.getGuild().removeRoleFromMember(member, potwUpdates).queue();
                     event.reply("Successfully removed the POTW Updates role.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            event.getGuild().addRoleToMember(member.getId(), potwUpdates).queue();
+            event.getGuild().addRoleToMember(member, potwUpdates).queue();
 
             event.reply("Successfully added the POTW Updates role.").setEphemeral(true).queue();
         }
@@ -253,8 +253,8 @@ public class ButtonListener extends ListenerAdapter {
             event.getGuild().createTextChannel("ticket-" + ticketId, ticketCategory).queue(
                 success -> {
                     // We will now give view and write permissions to the user
-                    success.createPermissionOverride(member)
-                            .setAllow(Permission.VIEW_CHANNEL)
+                    success.upsertPermissionOverride(member)
+                            .setAllowed(Permission.VIEW_CHANNEL)
                             .queue();
 
                     event.getHook()

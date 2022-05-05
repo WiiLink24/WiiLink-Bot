@@ -3,7 +3,7 @@ package com.wiilink24.bot.commands.misc;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class Userinfo {
     public Userinfo() {}
 
-    public void userInfo(SlashCommandEvent event) {
+    public void userInfo(SlashCommandInteractionEvent event) {
         Member member = event.getMember();
         User user = event.getUser();
 

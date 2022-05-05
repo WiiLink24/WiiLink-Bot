@@ -5,7 +5,7 @@ import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class Clear {
     public Clear() {}
 
-    public void clear(SlashCommandEvent event) {
+    public void clear(SlashCommandInteractionEvent event) {
         String messagesToClear = event.getOptionsByName("amount").get(0).getAsString();
         MessageHistory history = new MessageHistory(event.getChannel());
         List<Message> messages = history.retrievePast(Integer.parseInt(messagesToClear)).complete();

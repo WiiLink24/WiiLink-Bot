@@ -3,7 +3,7 @@ package com.wiilink24.bot.commands.misc;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.time.format.DateTimeFormatter;
@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class ServerInfo {
     public ServerInfo() {}
 
-    public void serverInfo(SlashCommandEvent event) {
+    public void serverInfo(SlashCommandInteractionEvent event) {
         Guild guild = event.getGuild();
 
         String features = "";

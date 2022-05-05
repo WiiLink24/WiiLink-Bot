@@ -3,7 +3,7 @@ package com.wiilink24.bot.commands.misc;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.concurrent.Task;
 
 import java.time.format.DateTimeFormatter;
@@ -12,7 +12,7 @@ import java.util.List;
 public class RoleInfo {
     public RoleInfo() {}
 
-    public void roleInfo(SlashCommandEvent event) {
+    public void roleInfo(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
         Role role = event.getOptionsByName("role").get(0).getAsRole();
 

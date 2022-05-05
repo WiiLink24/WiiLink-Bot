@@ -2,7 +2,7 @@ package com.wiilink24.bot.commands.misc;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -22,7 +22,7 @@ public class RiiTag
         this.httpClient = new OkHttpClient();
     }
 
-    public void riiTag(SlashCommandEvent event)
+    public void riiTag(SlashCommandInteractionEvent event)
     {
         User user = event.getUser();
         if (!event.getOptionsByName("user").isEmpty()) {
@@ -61,7 +61,7 @@ public class RiiTag
             });
     }
 
-    private void displayTag(SlashCommandEvent event, User user)
+    private void displayTag(SlashCommandInteractionEvent event, User user)
     {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setAuthor(user.getAsTag() + "'s RiiTag", null, user.getEffectiveAvatarUrl())

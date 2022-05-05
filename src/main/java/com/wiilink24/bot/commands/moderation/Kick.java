@@ -4,7 +4,7 @@ import com.wiilink24.bot.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * Kick command
@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 public class Kick {
     public Kick() {}
 
-    public void kick(SlashCommandEvent event) {
+    public void kick(SlashCommandInteractionEvent event) {
         // Member is a required field
         Member member = event.getOptionsByName("member").get(0).getAsMember();
 

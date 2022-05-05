@@ -1,7 +1,7 @@
 package com.wiilink24.bot.commands.misc;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * About command
@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 public class About  {
     public About() {}
 
-    public void about(SlashCommandEvent event) {
+    public void about(SlashCommandInteractionEvent event) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("<:wiilink:844609429239234640> About WiiLink Bot")
                 .setColor(0x00FF00)

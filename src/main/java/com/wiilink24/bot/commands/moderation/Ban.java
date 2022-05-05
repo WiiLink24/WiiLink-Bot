@@ -4,7 +4,7 @@ import com.wiilink24.bot.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * Ban command
@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 public class Ban {
     public Ban() {}
 
-    public void ban(SlashCommandEvent event) {
+    public void ban(SlashCommandInteractionEvent event) {
         // User is a required field
         User user = event.getOptionsByName("user").get(0).getAsUser();
 

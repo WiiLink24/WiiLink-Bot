@@ -3,7 +3,7 @@ package com.wiilink24.bot.commands.misc;
 import com.wiilink24.bot.Bot;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -28,7 +28,7 @@ public class Translate {
         this.bot = bot;
     }
 
-    public void translate(SlashCommandEvent event) {
+    public void translate(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
         String language = event.getOptionsByName("language").get(0).getAsString();
         String text = event.getOptionsByName("text").get(0).getAsString();

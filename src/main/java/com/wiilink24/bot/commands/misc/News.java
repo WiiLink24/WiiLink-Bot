@@ -2,8 +2,8 @@ package com.wiilink24.bot.commands.misc;
 
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,7 +20,7 @@ import java.io.IOException;
 public class News {
     public News() {}
 
-    public void news(SlashCommandEvent event) {
+    public void news(SlashCommandInteractionEvent event) {
         try {
             Document doc = Jsoup.connect("https://www.wiilink24.com/news").get();
             Element div = doc.select("div").get(3);

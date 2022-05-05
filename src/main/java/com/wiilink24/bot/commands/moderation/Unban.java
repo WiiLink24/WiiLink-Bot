@@ -3,7 +3,7 @@ package com.wiilink24.bot.commands.moderation;
 import com.wiilink24.bot.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 /**
  * Unban command
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 public class Unban {
     public Unban() {}
 
-    public void unban(SlashCommandEvent event) {
+    public void unban(SlashCommandInteractionEvent event) {
         // User is a required field
         User user = event.getOptionsByName("user").get(0).getAsUser();
 

@@ -2,7 +2,7 @@ package com.wiilink24.bot.commands.misc;
 
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,7 +26,7 @@ public class GameTDB {
         this.httpClient = new OkHttpClient();
     }
 
-    public void gameTDB(SlashCommandEvent event) {
+    public void gameTDB(SlashCommandInteractionEvent event) {
         String console = event.getOptionsByName("console").get(0).getAsString();
         String gameId = event.getOptionsByName("gameid").get(0).getAsString();
         String link = String.format("https://www.gametdb.com/%s/%s", console, gameId);

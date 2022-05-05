@@ -2,15 +2,15 @@ package com.wiilink24.bot.commands.misc;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.components.selections.SelectionMenu;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 
 public class Help {
     public Help() {}
 
-    public void help(SlashCommandEvent event) {
-        SelectionMenu.Builder selectionMenu = SelectionMenu.create("help")
+    public void help(SlashCommandInteractionEvent event) {
+        SelectMenu.Builder selectionMenu = SelectMenu.create("help")
                 .addOption("Miscellaneous", "misc")
                 .addOption("Music", "music");
 

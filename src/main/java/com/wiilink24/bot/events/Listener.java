@@ -12,14 +12,14 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.events.user.UserTypingEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.io.*;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -40,10 +40,10 @@ public class Listener implements EventListener {
     }
 
     @Override
-    public void onEvent(GenericEvent event) {
-        if (event instanceof GuildMessageReceivedEvent)
+    public void onEvent(@NotNull GenericEvent event) {
+        if (event instanceof MessageReceivedEvent)
         {
-            Message message = ((GuildMessageReceivedEvent)event).getMessage();
+            Message message = ((MessageReceivedEvent)event).getMessage();
 
             // Check whether this message should be deleted under the anti-swear list.
             if (shouldBeCensored(message)) {
@@ -113,7 +113,7 @@ public class Listener implements EventListener {
                 Sentry.captureException(e);
             }
         }
-        else if (event instanceof GuildMessageDeleteEvent delete) {
+        else if (event instanceof MessageDeleteEvent delete) {
             if (delete.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 MessageCache.CachedMessage message = this.cache.pullMessage(delete.getGuild(), delete.getMessageIdLong());
 
@@ -138,8 +138,8 @@ public class Listener implements EventListener {
                 }
             }
         }
-        else if (event instanceof GuildMessageUpdateEvent) {
-            Message message = ((GuildMessageUpdateEvent)event).getMessage();
+        else if (event instanceof MessageUpdateEvent) {
+            Message message = ((MessageUpdateEvent)event).getMessage();
 
             // Check whether this message should be deleted under the anti-swear list.
             if (shouldBeCensored(message)) {

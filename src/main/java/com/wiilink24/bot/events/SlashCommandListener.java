@@ -5,7 +5,7 @@ import com.wiilink24.bot.commands.misc.*;
 import com.wiilink24.bot.commands.moderation.*;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ public class SlashCommandListener extends ListenerAdapter {
     public SlashCommandListener(Bot bot) {this.bot = bot;}
 
     @Override
-    public void onSlashCommand(@NotNull SlashCommandEvent event) {
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         /*
         Moderation Listeners
          */

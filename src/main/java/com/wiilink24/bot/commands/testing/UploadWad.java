@@ -4,9 +4,9 @@ import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.sql.SQLException;
 
@@ -31,7 +31,7 @@ public class UploadWad extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    public void onMessageReceived(MessageReceivedEvent event) {
         String[] arguments = event.getMessage().getContentRaw().split(" ");
         if (arguments[0].equalsIgnoreCase("/uploadwad")) {
             // Ensure the running user has the needed developer ID.

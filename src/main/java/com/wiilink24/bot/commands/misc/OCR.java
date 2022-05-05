@@ -9,7 +9,7 @@ import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageSource;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
 public class OCR {
     public OCR() {}
 
-    public void ocr(SlashCommandEvent event) {
+    public void ocr(SlashCommandInteractionEvent event) {
         try {
             event.deferReply().queue();
             List<AnnotateImageRequest> requests = new ArrayList<>();

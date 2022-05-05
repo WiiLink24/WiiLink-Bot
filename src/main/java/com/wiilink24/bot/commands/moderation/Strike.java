@@ -4,7 +4,7 @@ import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.Database;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.sql.SQLException;
 
@@ -21,7 +21,7 @@ public class Strike {
         this.database = new Database();
     }
 
-    public void strike(SlashCommandEvent event) throws SQLException {
+    public void strike(SlashCommandInteractionEvent event) throws SQLException {
         // User is a required field
         User user = event.getOptionsByName("member").get(0).getAsUser();
 

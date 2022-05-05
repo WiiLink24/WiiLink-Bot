@@ -1,16 +1,15 @@
 package com.wiilink24.bot.events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SelectionMenuEvent;
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 
 import javax.annotation.Nonnull;
 
 public class SelectionBoxListener extends ListenerAdapter {
     public SelectionBoxListener() {}
 
-    public void onSelectionMenu(@Nonnull SelectionMenuEvent event) {
+    public void onSelectMenuInteraction(@Nonnull SelectMenuInteractionEvent event) {
         if (event.getComponentId().equals("help")) {
             // I hate you JDA for making the selection like this
             EmbedBuilder embed = new EmbedBuilder();

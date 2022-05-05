@@ -5,7 +5,7 @@ import io.sentry.Sentry;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ public class Ticket extends ListenerAdapter {
         this.database = new Database();
     }
 
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event)  {
+    public void onMessageReceived(MessageReceivedEvent event)  {
         String[] args = event.getMessage().getContentRaw().split(" ");
         if (args[0].equalsIgnoreCase("/ticket")) {
             if (!event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
@@ -32,7 +32,7 @@ public class Ticket extends ListenerAdapter {
                         // The mods/admins can do whatever they want with the channel afterwards
                         TextChannel ticketChannel = event.getGuild().getTextChannelsByName("ticket-" + args[2], false).get(0);
                         Member member = event.getGuild().retrieveMemberById(args[3]).complete();
-                        ticketChannel.createPermissionOverride(member).setDeny(Permission.VIEW_CHANNEL).queue();
+                        ticketChannel.upsertPermissionOverride(member).setDenied(Permission.VIEW_CHANNEL).queue();
                     } catch (SQLException e) {
                         event.getChannel().sendMessage("Failed to remove ticket").queue();
                         Sentry.captureException(e);

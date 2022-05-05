@@ -4,7 +4,7 @@ import com.wiilink24.bot.Bot;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.util.Hashtable;
 import java.util.Timer;
@@ -19,8 +19,8 @@ import java.util.TimerTask;
 public class Mute {
     public Mute() {}
 
-    public void mute(SlashCommandEvent event) {
-        Role mutedRole = event.getGuild().getRoleById("770836633419120650");
+    public void mute(SlashCommandInteractionEvent event) {
+        Role mutedRole = event.getGuild().getRoleById(Bot.mutedRoleId());
 
         // Member is a required field
         Member member = event.getOptionsByName("member").get(0).getAsMember();
@@ -69,7 +69,7 @@ public class Mute {
         // Add muted role, then set timer
         int finalTime = time;
         String finalTimeString = timeString;
-        event.getGuild().addRoleToMember(member.getUser().getId(), mutedRole).queue(
+        event.getGuild().addRoleToMember(member.getUser(), mutedRole).queue(
                 success -> {
                     event.reply("Successfully muted" + " **" + member.getUser().getName() + "**#" + member.getUser().getDiscriminator() + " for " + finalTimeString + ".").queue();
                     Bot.sendDM(member.getUser(), "You have been muted for " + finalTimeString + " in WiiLink.").queue();
@@ -79,7 +79,7 @@ public class Mute {
                             new TimerTask() {
                                 @Override
                                 public void run() {
-                                    event.getGuild().removeRoleFromMember(member.getUser().getId(), mutedRole).queue();
+                                    event.getGuild().removeRoleFromMember(member.getUser(), mutedRole).queue();
                                     event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(unmuteText).queue();
                                 }
                             }, finalTime

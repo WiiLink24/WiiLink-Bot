@@ -19,11 +19,21 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ButtonListener extends ListenerAdapter {
     private Database database;
     private WadUtil wad;
+
+    private final HashMap<String, String> buttonMappings = new HashMap<>(){{
+        put("discord_updates", "785986443846615112");
+        put("video_updates", "785986569445310485");
+        put("game_night", "785986612999749682");
+        put("content_updates", "790467855404892180");
+        put("related_updates", "797331365460312104");
+        put("potw", "835328614500532225");
+    }};
 
     public ButtonListener(Bot bot) {
         this.database = new Database();
@@ -33,12 +43,6 @@ public class ButtonListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String passedId = event.getComponentId();
-        final Role discordUpdates = event.getGuild().getRoleById("785986443846615112");
-        final Role videoUpdates = event.getGuild().getRoleById("785986569445310485");
-        final Role gameNightUpdates = event.getGuild().getRoleById("785986612999749682");
-        final Role contentUpdates = event.getGuild().getRoleById("790467855404892180");
-        final Role relatedUpdates = event.getGuild().getRoleById("797331365460312104");
-        final Role potwUpdates = event.getGuild().getRoleById("835328614500532225");
         final Category ticketCategory = event.getGuild().getCategoryById("905822898424520725");
         
         if (passedId.startsWith("patchdl_")) {
@@ -123,104 +127,7 @@ public class ButtonListener extends ListenerAdapter {
                 Sentry.captureException(e);
             }
         }
-        else if (passedId.equals("discord_updates")) {
-            Member member = event.getMember();
-
-            // Remove the role if the user has it
-            for (Role role : member.getRoles()) {
-                if (role.getName().equals("Discord Updates")) {
-                    event.getGuild().removeRoleFromMember(member, discordUpdates).queue();
-                    event.reply("Successfully removed the Discord Updates role.").setEphemeral(true).queue();
-                    return;
-                }
-            }
-
-            event.getGuild().addRoleToMember(member, discordUpdates).queue();
-
-            event.reply("Successfully added the Discord Updates role.").setEphemeral(true).queue();
-        }
-        else if (passedId.equals("video_updates")) {
-            Member member = event.getMember();
-
-            // Remove the role if the user has it
-            for (Role role : member.getRoles()) {
-                if (role.getName().equals("Video Updates")) {
-                    event.getGuild().removeRoleFromMember(member, videoUpdates).queue();
-                    event.reply("Successfully removed the Video Updates role.").setEphemeral(true).queue();
-                    return;
-                }
-            }
-
-            event.getGuild().addRoleToMember(member, videoUpdates).queue();
-
-            event.reply("Successfully added the Video Updates role.").setEphemeral(true).queue();
-        }
-        else if (passedId.equals("game_night")) {
-            Member member = event.getMember();
-
-            // Remove the role if the user has it
-            for (Role role : member.getRoles()) {
-                if (role.getName().equals("Game Night Updates")) {
-                    event.getGuild().removeRoleFromMember(member, gameNightUpdates).queue();
-                    event.reply("Successfully removed the Game Night Updates role.").setEphemeral(true).queue();
-                    return;
-                }
-            }
-
-            event.getGuild().addRoleToMember(member, gameNightUpdates).queue();
-
-            event.reply("Successfully added the Game Night Updates role.").setEphemeral(true).queue();
-        }
-
-        else if (passedId.equals("content_updates")) {
-            Member member = event.getMember();
-
-            // Remove the role if the user has it
-            for (Role role : member.getRoles()) {
-                if (role.getName().equals("Content Updates")) {
-                    event.getGuild().removeRoleFromMember(member, contentUpdates).queue();
-                    event.reply("Successfully removed the Content Updates role.").setEphemeral(true).queue();
-                    return;
-                }
-            }
-
-            event.getGuild().addRoleToMember(member, contentUpdates).queue();
-
-            event.reply("Successfully added the Content Updates role.").setEphemeral(true).queue();
-        }
-        else if (passedId.equals("related_updates")) {
-            Member member = event.getMember();
-
-            // Remove the role if the user has it
-            for (Role role : member.getRoles()) {
-                if (role.getName().equals("Related Project Updates")) {
-                    event.getGuild().removeRoleFromMember(member, relatedUpdates).queue();
-                    event.reply("Successfully removed the Related Project Updates role.").setEphemeral(true).queue();
-                    return;
-                }
-            }
-
-            event.getGuild().addRoleToMember(member, relatedUpdates).queue();
-
-            event.reply("Successfully added the Related Project Updates role.").setEphemeral(true).queue();
-        }
-        else if (passedId.equals("potw")) {
-            Member member = event.getMember();
-
-            // Remove the role if the user has it
-            for (Role role : member.getRoles()) {
-                if (role.getName().equals("POTW Updates")) {
-                    event.getGuild().removeRoleFromMember(member, potwUpdates).queue();
-                    event.reply("Successfully removed the POTW Updates role.").setEphemeral(true).queue();
-                    return;
-                }
-            }
-
-            event.getGuild().addRoleToMember(member, potwUpdates).queue();
-
-            event.reply("Successfully added the POTW Updates role.").setEphemeral(true).queue();
-        }
-        else if (event.getComponentId().startsWith("ticket")) {
+        else if (passedId.startsWith("ticket")) {
             Member member = event.getMember();
 
             // This may take a while. Let Discord know we received the event.
@@ -265,6 +172,33 @@ public class ButtonListener extends ListenerAdapter {
                     success.sendMessage("<@&750596106400038932> <@&901928638520369223> a new ticket was created by <@" + member.getId() + ">.").queue();
                 }
             );
+        }
+
+        // Handle role buttons.
+        if (buttonMappings.containsKey(passedId)) {
+            String roleId = buttonMappings.get(passedId);
+
+            // Determine role name
+            Role currentRole = event.getGuild().getRoleById(roleId);
+            if (currentRole == null) {
+                Sentry.captureMessage("Unable to find role with ID " + roleId);
+                return;
+            }
+            String roleName = currentRole.getName();
+
+            Member member = event.getMember();
+            if (member == null) {
+                return;
+            }
+
+            // Remove the role if the user has it
+            if (member.getRoles().contains(currentRole)) {
+                event.getGuild().removeRoleFromMember(member, currentRole).queue();
+                event.reply("Successfully removed the " + roleName + " role.").setEphemeral(true).queue();
+            } else {
+                event.getGuild().addRoleToMember(member, currentRole).queue();
+                event.reply("Successfully added the " + roleName + " role.").setEphemeral(true).queue();
+            }
         }
     }
 }

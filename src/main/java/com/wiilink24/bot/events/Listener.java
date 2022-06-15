@@ -58,7 +58,7 @@ public class Listener implements EventListener {
                 }
 
                 // The below is for the AFK command
-                List<Member> queried_members = message.getMentionedMembers();
+                List<Member> queried_members = message.getMentions().getMembers();
 
                 // If there are no mentioned members, don't bother querying
                 if (queried_members.size() != 0) {

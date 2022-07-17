@@ -213,7 +213,11 @@ public class Listener implements EventListener {
         }
     }
 
-    /* Checks whether the current message contains a word on the anti-swear list. */
+    /**
+     * Checks whether the current message contains a word on the anti-swear list.
+     * @param message The message to search.
+     * @return Whether a word within the message should be censored.
+     */
     private boolean shouldBeCensored(Message message) {
         for (String str : Bot.antiSwearWords) {
             Pattern pattern = Pattern.compile("(?i)" + str, Pattern.CASE_INSENSITIVE);
@@ -228,7 +232,12 @@ public class Listener implements EventListener {
         return false;
     }
 
-    /* Sends the embed to our log channel */
+    /**
+     * Sends the embed to our log channel
+     * @param event
+     * @param topMessage
+     * @param embed
+     */
     private void sendMessage(GenericEvent event, String topMessage, EmbedBuilder embed) {
         event.getJDA().getTextChannelById(modLog).sendMessage(topMessage)
                 .setEmbeds(embed.build()).queue();

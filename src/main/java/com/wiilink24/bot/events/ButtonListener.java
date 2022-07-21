@@ -29,10 +29,9 @@ public class ButtonListener extends ListenerAdapter {
     private final HashMap<String, String> buttonMappings = new HashMap<>(){{
         put("discord_updates", "785986443846615112");
         put("video_updates", "785986569445310485");
-        put("game_night", "785986612999749682");
         put("content_updates", "790467855404892180");
-        put("related_updates", "797331365460312104");
-        put("potw", "835328614500532225");
+        put("wiiroom_updates", "999534637602832504");
+        put("digicam_updates", "999534692074262578");
     }};
 
     public ButtonListener(Bot bot) {

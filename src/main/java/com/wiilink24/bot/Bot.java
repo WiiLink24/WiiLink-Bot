@@ -41,9 +41,9 @@ public class Bot {
 
         // Start Sentry
         Sentry.init( sentryOptions -> {
-                sentryOptions.setDsn(config.getSentryDSN());
-                sentryOptions.setTracesSampleRate(1.0);
-            }
+                    sentryOptions.setDsn(config.getSentryDSN());
+                    sentryOptions.setTracesSampleRate(1.0);
+                }
         );
 
         // Load the Anti-Swear
@@ -86,6 +86,10 @@ public class Bot {
         return "755522585864962099";
     }
 
+    public static String offTopic() {
+        return "750623609810190348";
+    }
+
     public static String serverLog() {
         return "913181713977458718";
     }
@@ -97,7 +101,7 @@ public class Bot {
     public static String developerRoleId() {
         return "750591972044963850";
     }
-    
+
     public static String wiiLinkServerId() {
         return "750581992223146074";
     }

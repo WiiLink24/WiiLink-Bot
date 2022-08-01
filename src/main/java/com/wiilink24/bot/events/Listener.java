@@ -28,12 +28,14 @@ import java.util.regex.Pattern;
 
 public class Listener implements EventListener {
     private final String modLog;
+    private final String offTopic;
     private final MessageCache cache;
     private final String timestamp;
     private final Database database;
 
     public Listener() {
         this.modLog = Bot.modLog();
+        this.offTopic = Bot.offTopic();
         this.cache = new MessageCache();
         this.timestamp = Bot.timestamp();
         this.database = new Database();
@@ -183,6 +185,7 @@ public class Listener implements EventListener {
         }
         else if (event instanceof GuildMemberJoinEvent member) {
             if (member.getGuild().getId().equals(Bot.wiiLinkServerId())) {
+                // Send message to server logs
                 String message = timestamp
                         + " :inbox_tray: **"
                         + member.getUser().getName()
@@ -194,6 +197,19 @@ public class Listener implements EventListener {
                         + member.getUser().getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
                 event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
+
+                // Now make embed to send to off-topic
+                EmbedBuilder embed = new EmbedBuilder()
+                        .setColor(0x00FF00)
+                        .setTitle("Welcome to WiiLink, " + member.getUser().getName() + "!")
+                        .setDescription(
+                                "- Be sure to install WiiLink by following the guide here: https://wii.guide/wiilink\n" +
+                                "- Get some roles to stay up to date with the service: <#785983938089713664>\n" +
+                                "- Get assistance for Wii Room at <#998024180559782020>\n" +
+                                "- Get assistance for Digicam at <#998026252529192981>\n"
+                        );
+
+                event.getJDA().getTextChannelById(offTopic).sendMessage("<@" + member.getUser().getId() + ">").setEmbeds(embed.build()).queue();
             }
         }
         else if (event instanceof GuildMemberRemoveEvent member) {

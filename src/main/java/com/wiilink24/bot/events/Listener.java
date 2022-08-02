@@ -28,14 +28,14 @@ import java.util.regex.Pattern;
 
 public class Listener implements EventListener {
     private final String modLog;
-    private final String offTopic;
+    private final String introductions;
     private final MessageCache cache;
     private final String timestamp;
     private final Database database;
 
     public Listener() {
         this.modLog = Bot.modLog();
-        this.offTopic = Bot.offTopic();
+        this.introductions = Bot.introductions();
         this.cache = new MessageCache();
         this.timestamp = Bot.timestamp();
         this.database = new Database();
@@ -50,6 +50,11 @@ public class Listener implements EventListener {
             // Check whether this message should be deleted under the anti-swear list.
             if (shouldBeCensored(message)) {
                 message.delete().queue();
+                return;
+            }
+
+            // Check if this was in a DM
+            if (!message.isFromGuild()) {
                 return;
             }
 
@@ -83,8 +88,7 @@ public class Listener implements EventListener {
                                         .addField("You were mentioned in a message in WiiLink", message.getContentRaw(), false)
                                         .setFooter("#" + message.getChannel().getName(), message.getGuild().getIconUrl());
 
-                                user.openPrivateChannel()
-                                        .flatMap(channel -> channel.sendMessageEmbeds(newEmbed.build())).complete();
+                                Bot.sendDM(user, embed.build()).complete();
                             }
 
                         }
@@ -198,18 +202,22 @@ public class Listener implements EventListener {
 
                 event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
 
-                // Now make embed to send to off-topic
+                // Now make embed and send to DM's
                 EmbedBuilder embed = new EmbedBuilder()
                         .setColor(0x00FF00)
                         .setTitle("Welcome to WiiLink, " + member.getUser().getName() + "!")
                         .setDescription(
+                                "- Make sure to introduce yourself in <#784944164378902529>!\n" +
                                 "- Be sure to install WiiLink by following the guide here: https://wii.guide/wiilink\n" +
                                 "- Get some roles to stay up to date with the service: <#785983938089713664>\n" +
                                 "- Get assistance for Wii Room at <#998024180559782020>\n" +
                                 "- Get assistance for Digicam at <#998026252529192981>\n"
                         );
 
-                event.getJDA().getTextChannelById(offTopic).sendMessage("<@" + member.getUser().getId() + ">").setEmbeds(embed.build()).queue();
+                Bot.sendDM(member.getUser(), embed.build()).queue();
+
+                // Now alert welcomers
+                event.getJDA().getTextChannelById(introductions).sendMessage("<@&1004155639938961448> welcome <@" + member.getUser().getId() + "> into the server!").queue();
             }
         }
         else if (event instanceof GuildMemberRemoveEvent member) {

@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import com.wiilink24.bot.events.Listener;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -82,12 +83,17 @@ public class Bot {
                 .flatMap(privateChannel -> privateChannel.sendMessage(message));
     }
 
+    public static RestAction<Message> sendDM(User user, MessageEmbed embed) {
+        return user.openPrivateChannel()
+                .flatMap(privateChannel -> privateChannel.sendMessageEmbeds(embed));
+    }
+
     public static String modLog() {
         return "755522585864962099";
     }
 
-    public static String offTopic() {
-        return "750623609810190348";
+    public static String introductions() {
+        return "1004162613904674946";
     }
 
     public static String serverLog() {

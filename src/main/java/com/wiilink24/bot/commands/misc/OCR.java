@@ -7,13 +7,16 @@ import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageSource;
+import com.google.protobuf.ByteString;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Command that pulls text from images.
@@ -31,8 +34,10 @@ public class OCR {
             List<AnnotateImageRequest> requests = new ArrayList<>();
             Image img;
 
-            ImageSource imgSource = ImageSource.newBuilder().setImageUri(event.getOptionsByName("uri").get(0).getAsString()).build();
-            img = Image.newBuilder().setSource(imgSource).build();
+            Message.Attachment attachment = event.getOption("image").getAsAttachment();
+
+            ByteString imgBytes = ByteString.readFrom(attachment.getProxy().download().get());
+            img = Image.newBuilder().setContent(imgBytes).build();
 
 
             Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
@@ -61,7 +66,7 @@ public class OCR {
                     event.getHook().sendMessageEmbeds(embed.build()).queue();
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | ExecutionException | InterruptedException e) {
             event.getHook().sendMessage("An error has occurred: " + e.getMessage()).setEphemeral(true).queue();
             Sentry.captureException(e);
         }

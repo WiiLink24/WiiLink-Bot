@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.requests.RestAction;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Server info command
@@ -27,13 +28,15 @@ public class ServerInfo {
         // I assume lazy loading is the fault as "net.dv8tion.jda.api.entities.Guild.retrieveOwner()" works
         RestAction<String> owner =  guild.retrieveOwner().map(Member::getAsMention);
 
+        Locale serverLocale = Locale.forLanguageTag(guild.getLocale().getLocale());
+
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Server Information")
                 .setThumbnail(guild.getIconUrl())
                 .addField(String.format("**%s**", guild.getName()),
                         ":white_small_square: ID: **" + guild.getId()
                                 + "**\n:white_small_square: Owner: **" + owner.complete()
-                                + "**\n:white_small_square: Location: **" + guild.getLocale().getCountry()
+                                + "**\n:white_small_square: Location: **" + serverLocale.getCountry()
                                 + "**\n:white_small_square: Creation: **" +  guild.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME)
                                 + "**\n:white_small_square: Members: **" + guild.getMemberCount()
                                 + "**\n:white_small_square: Channels: " + String.format("**%d** Channels; **%d** Text, **%d** Voice, **%d** Categories",

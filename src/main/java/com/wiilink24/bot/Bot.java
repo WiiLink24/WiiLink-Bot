@@ -55,7 +55,7 @@ public class Bot {
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.VOICE_STATE, CacheFlag.ROLE_TAGS)
                 .addEventListeners(new UploadWad(), new Ticket(), new Listener(), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener())
-                .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES);
+                .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.MESSAGE_CONTENT);
 
         builder.build();
     }

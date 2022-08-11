@@ -210,8 +210,8 @@ public class Listener implements EventListener {
                                 "- Make sure to introduce yourself in <#784944164378902529>!\n" +
                                 "- Be sure to install WiiLink by following the guide here: https://wii.guide/wiilink\n" +
                                 "- Get some roles to stay up to date with the service: <#785983938089713664>\n" +
-                                "- Get assistance for Wii Room at <#998024180559782020>\n" +
-                                "- Get assistance for Digicam at <#998026252529192981>\n"
+                                "- Get assistance for Wii Room at <#1006345374316892180>\n" +
+                                "- Get assistance for Digicam at <#1006352354888654878>\n"
                         );
 
                 Bot.sendDM(member.getUser(), embed.build()).queue();

@@ -4,6 +4,7 @@ import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.commands.misc.*;
 import com.wiilink24.bot.commands.moderation.*;
 import io.sentry.Sentry;
+import io.sentry.protocol.App;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -87,6 +88,9 @@ public class SlashCommandListener extends ListenerAdapter {
         }
         else if (event.getName().equals("afk")) {
             new AFK().afk(event);
+        }
+        else if (event.getName().equals("apply")) {
+            new Apply().apply(event);
         }
         else if (event.getName().equals("avatar")) {
             new Avatar().avatar(event);

@@ -68,7 +68,7 @@
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>
-                <version>26.1.0</version>
+                <version>26.1.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>6.4.0</version>
+            <version>6.4.1</version>
         </dependency>
 
         <dependency>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.4.2</version>
+            <version>42.5.0</version>
         </dependency>
 
         <!-- https://jdbc.postgresql.org/documentation/head/ds-ds.html

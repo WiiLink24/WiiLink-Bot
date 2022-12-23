@@ -32,6 +32,7 @@ public class ButtonListener extends ListenerAdapter {
         put("content_updates", "790467855404892180");
         put("wiiroom_updates", "999534637602832504");
         put("digicam_updates", "999534692074262578");
+        put("demae_updates", "1055876031304708156");
     }};
 
     public ButtonListener(Bot bot) {

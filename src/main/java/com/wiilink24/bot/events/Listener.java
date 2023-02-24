@@ -47,12 +47,6 @@ public class Listener implements EventListener {
         {
             Message message = ((MessageReceivedEvent)event).getMessage();
 
-            // Check whether this message should be deleted under the anti-swear list.
-            if (shouldBeCensored(message)) {
-                message.delete().queue();
-                return;
-            }
-
             // Check if this was in a DM
             if (!message.isFromGuild()) {
                 return;
@@ -147,14 +141,6 @@ public class Listener implements EventListener {
         else if (event instanceof MessageUpdateEvent) {
             Message message = ((MessageUpdateEvent)event).getMessage();
 
-            // Check whether this message should be deleted under the anti-swear list.
-            if (shouldBeCensored(message)) {
-                // Ensure the message's new content is cached.
-                this.cache.putMessage(message);
-                message.delete().queue();
-                return;
-            }
-
             if (message.getGuild().getId().equals(Bot.wiiLinkServerId())) {
                 if (!message.getAuthor().isBot()) {
                     // Store old message in a variable then log the new message
@@ -235,25 +221,6 @@ public class Listener implements EventListener {
                 event.getJDA().getTextChannelById(modLog).sendMessage(message).queue();
             }
         }
-    }
-
-    /**
-     * Checks whether the current message contains a word on the anti-swear list.
-     * @param message The message to search.
-     * @return Whether a word within the message should be censored.
-     */
-    private boolean shouldBeCensored(Message message) {
-        for (String str : Bot.antiSwearWords) {
-            Pattern pattern = Pattern.compile("(?i)" + str, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(message.getContentRaw());
-            boolean match = matcher.find();
-
-            if (match) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

@@ -101,6 +101,9 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("card")) {
             new Digicard().card(event);
         }
+        else if (event.getName().equals("dominos")) {
+            new Dominos().dominos(event);
+        }
         else if (event.getName().equals("gametdb")) {
             new GameTDB().gameTDB(event);
         }

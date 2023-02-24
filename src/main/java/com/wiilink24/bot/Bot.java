@@ -28,7 +28,7 @@ import java.util.List;
 
 public class Bot {
     static BasicDataSource connectionPool;
-    public static List<String> antiSwearWords = new ArrayList<>();
+    static BasicDataSource dominosPool;
     Config config = new Config();
 
     void run() throws LoginException {
@@ -40,15 +40,19 @@ public class Bot {
         connectionPool.setUrl(dbUrl());
         connectionPool.setInitialSize(3);
 
+        dominosPool = new BasicDataSource();
+        dominosPool.setDriverClassName("org.postgresql.Driver");
+        dominosPool.setUsername(dominosDbUser());
+        dominosPool.setPassword(dominosDbPass());
+        dominosPool.setUrl(dominosDbUrl());
+        dominosPool.setInitialSize(3);
+
         // Start Sentry
         Sentry.init( sentryOptions -> {
                     sentryOptions.setDsn(config.getSentryDSN());
                     sentryOptions.setTracesSampleRate(1.0);
                 }
         );
-
-        // Load the Anti-Swear
-        getAntiSwear();
 
         JDABuilder builder = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
@@ -58,23 +62,6 @@ public class Bot {
                 .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.MESSAGE_CONTENT);
 
         builder.build();
-    }
-
-    private static void getAntiSwear() {
-        // Load the Anti-Swear words
-        try {
-            File file = new File("./censor.txt");
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-
-            String st;
-            while ((st = reader.readLine()) != null) {
-                antiSwearWords.add(st);
-            }
-            System.out.println(antiSwearWords);
-        } catch (IOException e) {
-            // Should never occur in production
-            Sentry.captureException(e);
-        }
     }
 
     // We return a RestAction because depending on use we can complete or queue
@@ -130,6 +117,18 @@ public class Bot {
 
     public String dbUrl() {
         return config.getDatabaseCreds()[2];
+    }
+
+    public String dominosDbUser() {
+        return config.getDominosDatabaseCreds()[0];
+    }
+
+    public String dominosDbPass() {
+        return config.getDominosDatabaseCreds()[1];
+    }
+
+    public String dominosDbUrl() {
+        return config.getDominosDatabaseCreds()[2];
     }
 
     public String deepl() {

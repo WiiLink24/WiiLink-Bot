@@ -24,6 +24,17 @@ public class Config {
         return new String[]{user, password, database};
     }
 
+    public String[] getDominosDatabaseCreds() {
+        String user = getString("DOM_USER");
+        String password = getString("DOM_PASS");
+        String port = getString("DOM_PORT") == null ? "5432" : getString("DOM_PORT");
+
+        // Change the IP and port if needed.
+        String database = "jdbc:postgresql://localhost:" + port + "/" + getString("DOM_NAME");
+
+        return new String[]{user, password, database};
+    }
+
     public String getSentryDSN() {
         return getString("SENTRY_DSN") == null ? "" : getString("SENTRY_DSN");
     }

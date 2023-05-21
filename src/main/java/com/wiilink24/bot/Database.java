@@ -119,6 +119,16 @@ public class Database {
             pst.setString(2, "[]");
             pst.setInt(3, wiiId);
             pst.executeUpdate();
+        } catch (SQLException e) {
+            try (Connection con = Bot.dominosPool.getConnection()) {
+                PreparedStatement pst = con.prepareStatement("""
+                            UPDATE "user" SET basket = ?, wii_id = ? WHERE discord_id = ?
+                            """);
+                pst.setString(1, "[]");
+                pst.setInt(2, wiiId);
+                pst.setString(3, discordId);
+                pst.executeUpdate();
+            }
         }
     }
 

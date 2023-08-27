@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 public class Apply {
 
-    private final String applyURL = "https://tripetto.app/run/FVMGMRJUHV?userid=";
+    private final String applyURL = "https://tripetto.app/run/HQBKZIND4A?userid=";
 
     public void apply(SlashCommandInteractionEvent event) {
         event.getInteraction().deferReply().queue();

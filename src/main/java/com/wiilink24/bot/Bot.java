@@ -10,9 +10,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import com.wiilink24.bot.events.Listener;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import okhttp3.OkHttpClient;
@@ -56,8 +54,7 @@ public class Bot {
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.ROLE_TAGS)
-                .addEventListeners(new UploadWad(), new Listener(this), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener())
-                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
+                .addEventListeners(new UploadWad(), new Listener(this), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener());
 
         builder.build();
     }

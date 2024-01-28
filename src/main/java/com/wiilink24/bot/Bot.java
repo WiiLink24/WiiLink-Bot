@@ -8,7 +8,6 @@ import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import com.wiilink24.bot.events.Listener;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -54,7 +53,7 @@ public class Bot {
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.ROLE_TAGS)
-                .addEventListeners(new UploadWad(), new Listener(this), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener());
+                .addEventListeners(new UploadWad(), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener());
 
         builder.build();
     }

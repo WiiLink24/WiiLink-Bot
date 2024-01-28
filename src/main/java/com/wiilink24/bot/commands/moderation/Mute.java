@@ -5,7 +5,10 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.threeten.bp.temporal.ChronoUnit;
 
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,11 +20,12 @@ import java.util.TimerTask;
  */
 
 public class Mute {
-    public Mute() {}
+    private final Bot bot;
+    public Mute(Bot bot) {
+        this.bot = bot;
+    }
 
     public void mute(SlashCommandInteractionEvent event) {
-        Role mutedRole = event.getGuild().getRoleById(Bot.mutedRoleId());
-
         // Member is a required field
         Member member = event.getOptionsByName("member").get(0).getAsMember();
 
@@ -37,22 +41,10 @@ public class Mute {
             reason = event.getOptionsByName("reason").get(0).getAsString();
         }
 
-        // Default to a 1-day mute
-        int time = 86400;
-        String timeString = "1d";
-        if (!event.getOptionsByName("time").isEmpty()) {
-            timeString = event.getOptionsByName("time").get(0).getAsString();
-            time = timeMuted(timeString);
-        }
+        String timeString = event.getOptionsByName("time").get(0).getAsString();
+        int time = timeMuted(timeString);
 
-        String unmuteText = Bot.timestamp()
-                + " :loud_sound: **"
-                + event.getUser().getName()
-                + "**#"
-                + event.getUser().getDiscriminator()
-                + " was unmuted because their mute time expired.";
-
-        String message = Bot.timestamp()
+        String message = bot.timestamp()
                 + " :mute: **"
                 + event.getUser().getName()
                 + "**#"
@@ -67,26 +59,14 @@ public class Mute {
                 + reason;
 
         // Add muted role, then set timer
-        int finalTime = time;
         String finalTimeString = timeString;
-        event.getGuild().addRoleToMember(member.getUser(), mutedRole).queue(
+        event.getGuild().timeoutFor(member.getUser(), Duration.ofMillis(time)).reason(timeString).queue(
                 success -> {
-                    event.reply("Successfully muted" + " **" + member.getUser().getName() + "**#" + member.getUser().getDiscriminator() + " for " + finalTimeString + ".").queue();
+                    event.reply("Successfully timed out" + " **" + member.getUser().getName() + "** for " + finalTimeString + ".").queue();
                     Bot.sendDM(member.getUser(), "You have been muted for " + finalTimeString + " in WiiLink.").queue();
-                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(message).queue();
-
-                    new Timer().schedule(
-                            new TimerTask() {
-                                @Override
-                                public void run() {
-                                    event.getGuild().removeRoleFromMember(member.getUser(), mutedRole).queue();
-                                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(unmuteText).queue();
-                                }
-                            }, finalTime
-                    );
-                }, failure -> {
-                    event.reply("Failed to mute the specified member.").queue();
-                }
+                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).queue();
+                },
+                failure -> event.reply("Failed to mute the specified member.").queue()
         );
     }
 

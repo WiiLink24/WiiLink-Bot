@@ -34,23 +34,16 @@ public class SelectionBoxListener extends ListenerAdapter {
 
 
                 event.editMessageEmbeds(embed.build()).queue();
-            } else if (event.getValues().get(0).equals("music")) {
-                embed.setTitle("Music Commands")
-                        .setDescription("Commands that control the music player function of the bot.")
-                        .addField("Play", "Plays audio from the specified URL or mp3 file. Usage: `/play [url/file]`", false)
-                        .addField("Pause", "Pauses the current track. Usage: `/pause`", false)
-                        .addField("Stop", "Stops playing the current track. Usage: `/stop`", false)
-                        .addField("Seek", "Moves the track to the specified point in M:S format. Usage: `/seek [time]`", false)
-                        .addField("Now Playing", "Shows the data and state of the current track. Usage: `/np`", false)
-                        .addField("Restart", "Restarts the current track. Usage: `/restart`", false)
-                        .addField("Next", "Plays the next track in queue. Usage: `/next`", false)
-                        .addField("Previous", "Plays the previous track again. Usage: `/previous`", false)
-                        .addField("Queue", "Shows the upcoming tracks as well as the currently playing track. Usage: `/queue`", false)
-                        .addField("Shuffle", "Shuffles the songs in the queue. Usage: `/shuffle`", false)
-                        .addField("Connect", "Connects the bot the the voice channel you are in. Usage: `/connect`", false)
-                        .addField("Disconnect", "Disconnects the bot from the voice channel and clears the queue. Usage: `/disconnect`", false)
-                        .addField("Volume", "Adjusts the player's volume. Usage: `/volume [level]`", false)
-                        .addField("EQ", "Adjusts the equalizer for the current track. Usage: `/eq [preset]`", false);
+            } else if (event.getValues().get(0).equals("mod")) {
+                embed.setTitle("Moderation Commands")
+                        .setDescription("Commands that only mods can use. Use wisely. Arguments wrapped in `<>` are optional while `[]` is required")
+                        .addField("Ban", "Bans a user from the server. Usage: `/ban [user] <reason>`", false)
+                        .addField("Check", "Checks moderation information about a user. Usage: `/check [user]`", false)
+                        .addField("Clear", "Clears a specified amount of messages. Usage: `/clear [num]`", false)
+                        .addField("Kick", "Kicks a user from the server. Usage: `/kick [user] <reason>`", false)
+                        .addField("Timeout", "Times out a user in the server. Usage: `/timeout [user] [time] <reason>`", false)
+                        .addField("Unban", "Unbans a user from the server. Usage: `/unban [user]`", false);
+
 
                 event.editMessageEmbeds(embed.build()).queue();
             }

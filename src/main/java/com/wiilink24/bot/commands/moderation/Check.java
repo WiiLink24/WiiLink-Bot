@@ -29,9 +29,7 @@ public class Check {
             muted = "**Not in Server**";
         } else {
             user = member.getUser();
-            ArrayList<String> roleArray = member.getRoles().stream().map(Role::getId).collect(Collectors.toCollection(ArrayList::new));
-
-            if (roleArray.contains(Bot.mutedRoleId())) {
+            if (member.isTimedOut()) {
                 muted = "**Yes**";
             }
         }

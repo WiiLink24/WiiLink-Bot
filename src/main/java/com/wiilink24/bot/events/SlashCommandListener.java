@@ -24,7 +24,7 @@ public class SlashCommandListener extends ListenerAdapter {
         if (event.getName().equals("strike")) {
             if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
                 try {
-                    new Strike().strike(event);
+                    new Strike(bot).strike(event);
                 } catch (SQLException e) {
                     Sentry.captureException(e);
                     event.reply("An error has occurred. Contact Sketch.").queue();
@@ -35,7 +35,7 @@ public class SlashCommandListener extends ListenerAdapter {
         }
         else if (event.getName().equals("clear")) {
             if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Clear().clear(event);
+                new Clear(bot).clear(event);
             } else {
                 event.reply("You don't have permission to run this command!").queue();
             }
@@ -54,28 +54,28 @@ public class SlashCommandListener extends ListenerAdapter {
         }
         else if (event.getName().equals("ban")) {
             if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Ban().ban(event);
+                new Ban(bot).ban(event);
             } else {
                 event.reply("You don't have permission to run this command!").queue();
             }
         }
         else if (event.getName().equals("unban")) {
             if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Unban().unban(event);
+                new Unban(bot).unban(event);
             } else {
                 event.reply("You don't have permission to run this command!").queue();
             }
         }
         else if (event.getName().equals("kick")) {
             if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Kick().kick(event);
+                new Kick(bot).kick(event);
             } else {
                 event.reply("You don't have permission to run this command!").queue();
             }
         }
-        else if (event.getName().equals("mute")) {
+        else if (event.getName().equals("timeout")) {
             if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Mute().mute(event);
+                new Mute(bot).mute(event);
             } else {
                 event.reply("You don't have permission to run this command!").queue();
             }
@@ -83,12 +83,6 @@ public class SlashCommandListener extends ListenerAdapter {
         /*
         General Listeners
          */
-        else if (event.getName().equals("about")) {
-            new About().about(event);
-        }
-        else if (event.getName().equals("afk")) {
-            new AFK().afk(event);
-        }
         else if (event.getName().equals("apply")) {
             new Apply().apply(event);
         }
@@ -104,14 +98,14 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("dominos")) {
             new Dominos().dominos(event);
         }
+        else if (event.getName().equals("error")) {
+            new ErrorCodes().errorCode(event);
+        }
         else if (event.getName().equals("gametdb")) {
             new GameTDB().gameTDB(event);
         }
         else if (event.getName().equals("mii")) {
             new Mii().mii(event);
-        }
-        else if (event.getName().equals("ocr")) {
-            new OCR().ocr(event);
         }
         else if (event.getName().equals("ping")) {
             new Ping().ping(event);
@@ -122,14 +116,8 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("serverinfo")) {
             new ServerInfo().serverInfo(event);
         }
-        else if (event.getName().equals("translate")) {
-            new Translate(this.bot).translate(event);
-        }
         else if (event.getName().equals("userinfo")) {
             new Userinfo().userInfo(event);
-        }
-        else if (event.getName().equals("news")) {
-            new News().news(event);
         }
         else if (event.getName().equals("help")) {
             new Help().help(event);

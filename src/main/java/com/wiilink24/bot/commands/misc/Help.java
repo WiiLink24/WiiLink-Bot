@@ -11,14 +11,12 @@ public class Help {
 
     public void help(SlashCommandInteractionEvent event) {
         SelectMenu.Builder selectionMenu = SelectMenu.create("help")
-                .addOption("Miscellaneous", "misc")
-                .addOption("Music", "music");
+                .addOption("Miscellaneous", "misc");
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("WiiLink Bot Help")
                 .setDescription("Read through the command categories and use the corresponding selection menu")
                 .addField("Miscellaneous Commands", "General commands that all users can use", false)
-                .addField("Music Commands", "Commands to control the music functionality of WiiLink Bot. Can be used in all servers.", false)
                 .setFooter("Invoked by: " + event.getUser().getName(), event.getUser().getEffectiveAvatarUrl());
 
         if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {

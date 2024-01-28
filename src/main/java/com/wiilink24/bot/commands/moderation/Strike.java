@@ -16,9 +16,11 @@ import java.sql.SQLException;
 
 public class Strike {
     private final Database database;
+    private final Bot bot;
 
-    public Strike() {
+    public Strike(Bot bot) {
         this.database = new Database();
+        this.bot = bot;
     }
 
     public void strike(SlashCommandInteractionEvent event) throws SQLException {
@@ -58,8 +60,8 @@ public class Strike {
 
         event.reply("Successfully gave " + strikes + " strikes to **" + user.getName() + "**#" + user.getDiscriminator()).queue();
         Bot.sendDM(user, "You were given " + strikes + " strikes in WiiLink for `" + reason + "`").queue();
-        event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(
-                Bot.timestamp()
+        event.getJDA().getTextChannelById(bot.modLog()).sendMessage(
+                bot.timestamp()
                         + " :triangular_flag_on_post: **"
                         + event.getUser().getName()
                         + "**#"

@@ -12,7 +12,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  */
 
 public class Unban {
-    public Unban() {}
+    private final Bot bot;
+    public Unban(Bot bot) {
+        this.bot = bot;
+    }
 
     public void unban(SlashCommandInteractionEvent event) {
         // User is a required field
@@ -25,7 +28,7 @@ public class Unban {
                     event.replyEmbeds(embed.build()).queue();
 
                     // Send to logs
-                    String topMessage = Bot.timestamp()
+                    String topMessage = bot.timestamp()
                             + " :hammer: **"
                             + event.getUser().getName()
                             + "**#"
@@ -38,7 +41,7 @@ public class Unban {
                             + user.getId()
                             + ")\n";
 
-                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(topMessage).queue();
+                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(topMessage).queue();
                 }, failure -> {
                     event.reply("Failed to unban the requested user.").queue();
                 }

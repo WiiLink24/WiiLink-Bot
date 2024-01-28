@@ -1,5 +1,6 @@
 package com.wiilink24.bot.commands.misc;
 
+import com.wiilink24.bot.WiiLinkBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -14,13 +15,9 @@ import java.io.IOException;
 
 public class RiiTag
 {
-    private final OkHttpClient httpClient;
     private final String URL = "https://tag.rc24.xyz/%s/tag.max.png?randomizer=%f";
 
-    public RiiTag()
-    {
-        this.httpClient = new OkHttpClient();
-    }
+    private final OkHttpClient httpClient = WiiLinkBot.getInstance().getHttpClient();
 
     public void riiTag(SlashCommandInteractionEvent event)
     {
@@ -29,6 +26,7 @@ public class RiiTag
             user = event.getOptionsByName("user").get(0).getAsUser();
         }
 
+        event.deferReply().queue();
         Request request = new Request.Builder().url(String.format(URL, user.getId(), 0D)).build();
         User finalUser = user;
 
@@ -37,7 +35,7 @@ public class RiiTag
                 @Override
                 public void onFailure(Call call, IOException e)
                 {
-                    event.reply("WOW! RiiTag has timed out! What a surprise, indeed " +
+                    event.getHook().sendMessage("WOW! RiiTag has timed out! What a surprise, indeed " +
                             "||it's not a surprise, at all||.\n Complain to Larsenv, I guess.").queue();
                 }
 
@@ -46,7 +44,7 @@ public class RiiTag
                 {
                     if(response.code() == 404)
                     {
-                        event.reply("**" + finalUser.getAsTag() + "** does not have a RiiTag!").queue();
+                        event.getHook().sendMessage("**" + finalUser.getAsTag() + "** does not have a RiiTag!").queue();
                         return;
                     }
 
@@ -68,6 +66,6 @@ public class RiiTag
                 .setColor(0x00FF00)
                 .setImage(String.format(URL, user.getId(), Math.random()));
 
-        event.replyEmbeds(embedBuilder.build()).queue();
+        event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }

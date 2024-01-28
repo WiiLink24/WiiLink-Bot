@@ -13,7 +13,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  */
 
 public class Kick {
-    public Kick() {}
+    private final Bot bot;
+    public Kick(Bot bot) {
+        this.bot = bot;
+    }
 
     public void kick(SlashCommandInteractionEvent event) {
         // Member is a required field
@@ -31,7 +34,7 @@ public class Kick {
             reason = event.getOptionsByName("reason").get(0).getAsString();
         }
 
-        String message = Bot.timestamp()
+        String message = bot.timestamp()
                 + " :boot: **"
                 + event.getUser().getName()
                 + "**#"
@@ -52,6 +55,6 @@ public class Kick {
         Bot.sendDM(member.getUser(), "You were kicked from WiiLink for `" + reason + "`").complete();
         event.getGuild().kick(member).complete();
 
-        event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(message).complete();
+        event.getJDA().getTextChannelById(bot.modLog()).sendMessage(message).complete();
     }
 }

@@ -9,6 +9,8 @@ import javax.security.auth.login.LoginException;
  */
 
 public class WiiLinkBot {
+    private static Bot instance;
+
     public static void main(String[] args) throws LoginException {
         final String GREEN = "\033[1;32m";
         final String RESET = "\033[0m";
@@ -16,6 +18,12 @@ public class WiiLinkBot {
         System.out.println(GREEN + "Starting WiiLink Bot...");
         System.out.println("Started!" + RESET);
 
-        new Bot().run();
+        instance = new Bot();
+        instance.run();
+    }
+
+    public static Bot getInstance() {
+        if (instance == null) throw new IllegalStateException("The bot is not initialized!");
+        return instance;
     }
 }

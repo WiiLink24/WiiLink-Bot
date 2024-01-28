@@ -1,6 +1,5 @@
 package com.wiilink24.bot;
 
-import com.wiilink24.bot.commands.moderation.Ticket;
 import com.wiilink24.bot.commands.testing.UploadWad;
 import com.wiilink24.bot.events.ButtonListener;
 import com.wiilink24.bot.events.SelectionBoxListener;
@@ -16,19 +15,18 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import okhttp3.OkHttpClient;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
-import java.io.*;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Bot {
     static BasicDataSource connectionPool;
     static BasicDataSource dominosPool;
+    private final OkHttpClient httpClient = new OkHttpClient();
     Config config = new Config();
 
     void run() throws LoginException {
@@ -57,9 +55,9 @@ public class Bot {
         JDABuilder builder = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
-                .enableCache(CacheFlag.VOICE_STATE, CacheFlag.ROLE_TAGS)
-                .addEventListeners(new UploadWad(), new Ticket(), new Listener(), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener())
-                .enableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.MESSAGE_CONTENT);
+                .enableCache(CacheFlag.ROLE_TAGS)
+                .addEventListeners(new UploadWad(), new Listener(this), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener())
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
 
         builder.build();
     }
@@ -70,21 +68,12 @@ public class Bot {
                 .flatMap(privateChannel -> privateChannel.sendMessage(message));
     }
 
-    public static RestAction<Message> sendDM(User user, MessageEmbed embed) {
-        return user.openPrivateChannel()
-                .flatMap(privateChannel -> privateChannel.sendMessageEmbeds(embed));
+    public String modLog() {
+        return config.modLog;
     }
 
-    public static String modLog() {
-        return "755522585864962099";
-    }
-
-    public static String introductions() {
-        return "1004162613904674946";
-    }
-
-    public static String serverLog() {
-        return "913181713977458718";
+    public String serverLog() {
+        return config.serverLog;
     }
 
     public static String patchesChannel() {
@@ -95,51 +84,47 @@ public class Bot {
         return "750591972044963850";
     }
 
-    public static String wiiLinkServerId() {
-        return "750581992223146074";
-    }
-
-    public static String mutedRoleId() {
-        return "770836633419120650";
-    }
-
-    public static String timestamp() {
+    public String timestamp() {
         return DateTimeFormatter.ofPattern("'`['HH:mm:ss']`'").withZone(ZoneOffset.UTC).format(Instant.now());
     }
 
     public String dbUser() {
-        return config.getDatabaseCreds()[0];
+        return config.databaseCreds[0];
     }
 
     public String dbPass() {
-        return config.getDatabaseCreds()[1];
+        return config.databaseCreds[1];
     }
 
     public String dbUrl() {
-        return config.getDatabaseCreds()[2];
+        return config.databaseCreds[2];
     }
 
     public String dominosDbUser() {
-        return config.getDominosDatabaseCreds()[0];
+        return config.dominosCreds[0];
     }
 
     public String dominosDbPass() {
-        return config.getDominosDatabaseCreds()[1];
+        return config.dominosCreds[1];
     }
 
     public String dominosDbUrl() {
-        return config.getDominosDatabaseCreds()[2];
-    }
-
-    public String deepl() {
-        return config.getDeeplCreds();
+        return config.dominosCreds[2];
     }
 
     public String wadPath() {
-        return config.getWadsDirectory();
+        return config.wadsDir;
     }
 
     public String owoToken() {
-        return config.getOwoCreds();
+        return config.owoToken;
+    }
+
+    public String mainServerId() {
+        return config.mainServer;
+    }
+
+    public OkHttpClient getHttpClient() {
+        return this.httpClient;
     }
 }

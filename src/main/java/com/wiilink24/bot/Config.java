@@ -5,6 +5,28 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class Config {
     Dotenv dotenv = Dotenv.load();
 
+    public String discordToken;
+    public String[] databaseCreds;
+    public String[] dominosCreds;
+    public String sentryDSN;
+    public String owoToken;
+    public String wadsDir;
+    public String mainServer;
+    public String modLog;
+    public String serverLog;
+
+    public Config() {
+        discordToken = getToken();
+        databaseCreds = getDatabaseCreds();
+        dominosCreds = getDominosDatabaseCreds();
+        sentryDSN = getSentryDSN();
+        owoToken = getOwoCreds();
+        wadsDir = getWadsDirectory();
+        mainServer = getMainServer();
+        modLog = getModLog();
+        serverLog = getServerLog();
+    }
+
     private String getString(String key) {
         return dotenv.get(key);
     }
@@ -49,5 +71,17 @@ public class Config {
 
     public String getWadsDirectory() {
         return getString("WADS_DIR");
+    }
+
+    public String getMainServer() {
+        return getString("MAIN_SERVER_ID");
+    }
+
+    public String getModLog() {
+        return getString("MOD_LOG_ID");
+    }
+
+    public String getServerLog() {
+        return getString("SERVER_LOG_ID");
     }
 }

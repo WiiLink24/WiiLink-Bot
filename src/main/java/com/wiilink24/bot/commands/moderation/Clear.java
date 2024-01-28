@@ -16,7 +16,11 @@ import java.util.List;
  */
 
 public class Clear {
-    public Clear() {}
+    private final Bot bot;
+
+    public Clear(Bot bot) {
+        this.bot = bot;
+    }
 
     public void clear(SlashCommandInteractionEvent event) {
         String messagesToClear = event.getOptionsByName("amount").get(0).getAsString();
@@ -43,6 +47,6 @@ public class Clear {
 
         // Log to server logs
         EmbedBuilder embed = new EmbedBuilder().setTitle(event.getUser().getName() + "#" + event.getUser().getDiscriminator() + " cleared " + messagesToClear + " messages");
-        event.getJDA().getTextChannelById(Bot.serverLog()).sendMessageEmbeds(embed.build()).complete();
+        event.getJDA().getTextChannelById(bot.modLog()).sendMessageEmbeds(embed.build()).complete();
     }
 }

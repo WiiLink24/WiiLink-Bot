@@ -13,7 +13,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
  */
 
 public class Ban {
-    public Ban() {}
+    private final Bot bot;
+
+    public Ban(Bot bot) {
+        this.bot = bot;
+    }
 
     public void ban(SlashCommandInteractionEvent event) {
         // User is a required field
@@ -43,7 +47,7 @@ public class Ban {
                     event.replyEmbeds(embed.build()).queue();
 
                     // Send to logs
-                    String topMessage = Bot.timestamp()
+                    String topMessage = bot.timestamp()
                             + " :hammer: **"
                             + event.getUser().getName()
                             + "**#"
@@ -60,10 +64,8 @@ public class Ban {
                             + "`";
 
                     Bot.sendDM(user, "You were banned in WiiLink for **`" + finalReason + "`**").queue();
-                    event.getJDA().getTextChannelById(Bot.serverLog()).sendMessage(topMessage).queue();
-                }, failure -> {
-                    event.reply("Failed to ban the requested user.").queue();
-                }
+                    event.getJDA().getTextChannelById(bot.modLog()).sendMessage(topMessage).queue();
+                }, failure -> event.reply("Failed to ban the requested user.").queue()
         );
     }
 }

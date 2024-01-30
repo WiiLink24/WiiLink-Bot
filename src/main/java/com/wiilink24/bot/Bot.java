@@ -50,7 +50,7 @@ public class Bot {
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.ROLE_TAGS)
-                .addEventListeners(new UploadWad(), new ButtonListener(), new SlashCommandListener(), new SelectionBoxListener());
+                .addEventListeners(new ButtonListener(), new SlashCommandListener(), new SelectionBoxListener());
 
         builder.build();
     }

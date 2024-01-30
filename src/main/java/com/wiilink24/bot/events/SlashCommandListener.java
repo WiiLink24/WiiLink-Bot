@@ -2,10 +2,6 @@ package com.wiilink24.bot.events;
 
 import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.commands.misc.*;
-import com.wiilink24.bot.commands.moderation.*;
-import io.sentry.Sentry;
-import io.sentry.protocol.App;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -19,71 +15,9 @@ public class SlashCommandListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         /*
-        Moderation Listeners
-         */
-        if (event.getName().equals("strike")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                try {
-                    new Strike(bot).strike(event);
-                } catch (SQLException e) {
-                    Sentry.captureException(e);
-                    event.reply("An error has occurred. Contact Sketch.").queue();
-                }
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        else if (event.getName().equals("clear")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Clear(bot).clear(event);
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        else if (event.getName().equals("check")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                try {
-                    new Check().check(event);
-                } catch (SQLException e) {
-                    Sentry.captureException(e);
-                    event.reply("An error has occurred. Contact Sketch.").queue();
-                }
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        else if (event.getName().equals("ban")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Ban(bot).ban(event);
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        else if (event.getName().equals("unban")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Unban(bot).unban(event);
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        else if (event.getName().equals("kick")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Kick(bot).kick(event);
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        else if (event.getName().equals("timeout")) {
-            if (event.getMember().getPermissions().contains(Permission.BAN_MEMBERS)) {
-                new Mute(bot).mute(event);
-            } else {
-                event.reply("You don't have permission to run this command!").queue();
-            }
-        }
-        /*
         General Listeners
          */
-        else if (event.getName().equals("apply")) {
+        if (event.getName().equals("apply")) {
             new Apply().apply(event);
         }
         else if (event.getName().equals("avatar")) {

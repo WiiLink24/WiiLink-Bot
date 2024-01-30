@@ -55,20 +55,6 @@ public class Bot {
         builder.build();
     }
 
-    // We return a RestAction because depending on use we can complete or queue
-    public static RestAction<Message> sendDM(User user, String message) {
-        return user.openPrivateChannel()
-                .flatMap(privateChannel -> privateChannel.sendMessage(message));
-    }
-
-    public String modLog() {
-        return config.modLog;
-    }
-
-    public String serverLog() {
-        return config.serverLog;
-    }
-
     public static String patchesChannel() {
         return "894316256788893706";
     }

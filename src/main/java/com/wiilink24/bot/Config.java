@@ -12,8 +12,6 @@ public class Config {
     public String owoToken;
     public String wadsDir;
     public String mainServer;
-    public String modLog;
-    public String serverLog;
 
     public Config() {
         discordToken = getToken();
@@ -23,8 +21,6 @@ public class Config {
         owoToken = getOwoCreds();
         wadsDir = getWadsDirectory();
         mainServer = getMainServer();
-        modLog = getModLog();
-        serverLog = getServerLog();
     }
 
     private String getString(String key) {
@@ -61,10 +57,6 @@ public class Config {
         return getString("SENTRY_DSN") == null ? "" : getString("SENTRY_DSN");
     }
 
-    public String getDeeplCreds() {
-        return getString("DEEPL_TOKEN");
-    }
-
     public String getOwoCreds() {
         return getString("OWO_TOKEN");
     }
@@ -75,13 +67,5 @@ public class Config {
 
     public String getMainServer() {
         return getString("MAIN_SERVER_ID");
-    }
-
-    public String getModLog() {
-        return getString("MOD_LOG_ID");
-    }
-
-    public String getServerLog() {
-        return getString("SERVER_LOG_ID");
     }
 }

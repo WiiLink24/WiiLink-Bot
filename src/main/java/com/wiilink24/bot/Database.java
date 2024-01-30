@@ -1,9 +1,17 @@
 package com.wiilink24.bot;
 
+import com.google.gson.Gson;
+import com.wiilink24.bot.utils.CodeType;
+
 import java.sql.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 // For common Database functions
 public class Database {
+    private final Gson gson = new Gson();
+
     public void insertWiiId(String discordId, Integer wiiId) throws SQLException {
         try (Connection con = Bot.dominosPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement("""
@@ -111,5 +119,107 @@ public class Database {
             pst.setString(3, uploadedUrl);
             pst.executeUpdate();
         }
+    }
+
+    public Map<CodeType, Map<String, String>> getAllCodes(long user) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement query = con.prepareStatement("SELECT * FROM codes WHERE user_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            query.setLong(1, user);
+
+            ResultSet row = query.executeQuery();
+            Map<CodeType, Map<String, String>> map = new HashMap<>();
+            while (row.next()) {
+                for(CodeType type : CodeType.values())
+                {
+                    if(type == null)
+                        continue;
+
+                    Map<String, String> typeMap = gson.fromJson(row.getString(type.getColumn()), Map.class);
+                    if(typeMap == null)
+                        typeMap = new HashMap<>();
+
+                    map.put(type, typeMap);
+                }
+            }
+
+            return map;
+        }
+    }
+
+    public Map<String, String> getCodesForType(CodeType type, long user) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement query = con.prepareStatement("SELECT * FROM codes WHERE user_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            query.setLong(1, user);
+
+            ResultSet row = query.executeQuery();
+            if (row.next()) {
+                return gson.fromJson(row.getString(type.getColumn()), Map.class);
+            }
+
+            return Collections.emptyMap();
+        }
+    }
+
+    public void addCode(CodeType type, long id, String code, String name) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("INSERT INTO codes (user_id, " + type.getColumn() + ") " +
+                    "VALUES(?, ?) ON CONFLICT(user_id) DO UPDATE SET " + type.getColumn() + " = ?");
+
+            String json = gson.toJson(updateCodeCache(type, id, code, name));
+
+            pst.setLong(1, id);
+            pst.setString(2, json);
+            pst.setString(3, json);
+            pst.executeUpdate();
+        }
+    }
+
+    private Map<String, String> updateCodeCache(CodeType type, long id, String code, String name) {
+        Map<String, String> currentCodes = WiiLinkBot.getInstance().getCodesForType(type, id);
+        if(currentCodes == null || currentCodes.getClass().getSimpleName().equals("EmptyMap"))
+            currentCodes = new HashMap<>();
+
+        currentCodes.put(name, code);
+        WiiLinkBot.getInstance().updateCodeCache(type, id, currentCodes);
+
+        return currentCodes;
+    }
+
+    public void editCode(CodeType type, long id, String code, String name) throws SQLException {
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("UPDATE codes SET " + type.getColumn() + " = ? " +
+                    "WHERE user_id = ?");
+
+            pst.setString(1, gson.toJson(updateCodeCache(type, id, code, name)));
+            pst.setLong(2, id);
+            pst.executeUpdate();
+        }
+    }
+
+    public void removeCode(CodeType type, long id, String name) throws SQLException {
+        Map<String, String> map = removeFromCodeCache(type, id, name);
+        if(map == null)
+            return;
+
+        try (Connection con = Bot.connectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("UPDATE codes SET " + type.getColumn() + " = ? " +
+                    "WHERE user_id = ?");
+
+            pst.setString(1, gson.toJson(map));
+            pst.setLong(2, id);
+            pst.executeUpdate();
+        }
+    }
+
+    private Map<String, String> removeFromCodeCache(CodeType type, long id, String name)
+    {
+        Map<String, String> currentCodes = WiiLinkBot.getInstance().getCodesForType(type, id);
+        if(currentCodes == null || currentCodes.getClass().getSimpleName().equals("EmptyMap"))
+            return null;
+
+        currentCodes.remove(name);
+        WiiLinkBot.getInstance().updateCodeCache(type, id, currentCodes);
+
+        return currentCodes;
     }
 }

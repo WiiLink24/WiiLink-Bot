@@ -1,26 +1,40 @@
 package com.wiilink24.bot;
 
+import com.google.common.cache.Cache;
 import com.wiilink24.bot.commands.testing.UploadWad;
 import com.wiilink24.bot.events.ButtonListener;
 import com.wiilink24.bot.events.SelectionBoxListener;
 import com.wiilink24.bot.events.SlashCommandListener;
+import com.wiilink24.bot.utils.CodeType;
+import com.wiilink24.bot.utils.SimpleCacheBuilder;
 import io.sentry.Sentry;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import okhttp3.OkHttpClient;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class Bot {
     static BasicDataSource connectionPool;
     static BasicDataSource dominosPool;
     private final OkHttpClient httpClient = new OkHttpClient();
+
+    private final Cache<Long, Map<CodeType, Map<String, String>>> codeCache = new SimpleCacheBuilder<>(3).build();
     Config config = new Config();
 
     void run() throws LoginException {
@@ -46,13 +60,12 @@ public class Bot {
                 }
         );
 
-        JDABuilder builder = JDABuilder.createLight(config.getToken())
+        JDA jda = JDABuilder.createLight(config.getToken())
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.ROLE_TAGS)
-                .addEventListeners(new ButtonListener(), new SlashCommandListener(), new SelectionBoxListener());
-
-        builder.build();
+                .addEventListeners(new ButtonListener(), new SlashCommandListener(), new SelectionBoxListener())
+                .build();
     }
 
     public static String patchesChannel() {
@@ -101,5 +114,41 @@ public class Bot {
 
     public OkHttpClient getHttpClient() {
         return this.httpClient;
+    }
+
+    public BasicDataSource getConnectionPool() {
+        return connectionPool;
+    }
+
+    public Map<CodeType, Map<String, String>> getAllCodes(long user)
+    {
+        try
+        {
+            Database db = new Database();
+            return codeCache.get(user, () -> db.getAllCodes(user));
+        }
+        catch(ExecutionException e)
+        {
+            return Collections.emptyMap();
+        }
+    }
+
+    public Map<String, String> getCodesForType(CodeType type, long user)
+    {
+        try
+        {
+            Database db = new Database();
+            Map<CodeType, Map<String, String>> allCodes = codeCache.get(user, () -> db.getAllCodes(user));
+            return allCodes == null ? Collections.emptyMap() : (allCodes.get(type) == null ? Collections.emptyMap() : allCodes.get(type));
+        }
+        catch(ExecutionException e)
+        {
+            return Collections.emptyMap();
+        }
+    }
+
+    public void updateCodeCache(CodeType type, long id, Map<String, String> map)
+    {
+        getAllCodes(id).put(type, map);
     }
 }

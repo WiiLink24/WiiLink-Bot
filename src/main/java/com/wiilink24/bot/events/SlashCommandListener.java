@@ -2,6 +2,7 @@ package com.wiilink24.bot.events;
 
 import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.commands.misc.*;
+import io.sentry.Sentry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +27,19 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("card")) {
             new Digicard().card(event);
         }
+        else if (event.getName().equals("code")) {
+            try {
+                new CodeHandler().codeHandler(event);
+            } catch (SQLException e) {
+                Sentry.captureException(e);
+                event.reply("An error has occurred. Contact Sketch.").queue();
+            }
+        }
         else if (event.getName().equals("dominos")) {
             new Dominos().dominos(event);
+        }
+        else if (event.getName().equals("dns")) {
+            new DNS().dns(event);
         }
         else if (event.getName().equals("error")) {
             new ErrorCodes().errorCode(event);

@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 
 public class SlashCommandListener extends ListenerAdapter {
-    private final Bot bot;
-    public SlashCommandListener(Bot bot) {this.bot = bot;}
-
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         /*

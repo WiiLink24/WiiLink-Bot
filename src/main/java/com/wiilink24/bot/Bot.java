@@ -16,9 +16,6 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.security.auth.login.LoginException;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 
 public class Bot {
     static BasicDataSource connectionPool;
@@ -53,7 +50,7 @@ public class Bot {
                 .setStatus(OnlineStatus.ONLINE)
                 .setActivity(Activity.playing("Ordering Demae Dominos"))
                 .enableCache(CacheFlag.ROLE_TAGS)
-                .addEventListeners(new UploadWad(), new ButtonListener(this), new SlashCommandListener(this), new SelectionBoxListener());
+                .addEventListeners(new UploadWad(), new ButtonListener(), new SlashCommandListener(), new SelectionBoxListener());
 
         builder.build();
     }
@@ -78,10 +75,6 @@ public class Bot {
 
     public static String developerRoleId() {
         return "750591972044963850";
-    }
-
-    public String timestamp() {
-        return DateTimeFormatter.ofPattern("'`['HH:mm:ss']`'").withZone(ZoneOffset.UTC).format(Instant.now());
     }
 
     public String dbUser() {

@@ -1,25 +1,23 @@
 package com.wiilink24.bot.utils;
 
-import com.wiilink24.bot.Bot;
+import com.wiilink24.bot.WiiLinkBot;
 import me.bramhaag.owo.OwO;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class WadUtil {
-    private OwO owo;
-    private Bot bot;
+    private final OwO owo;
 
-    public WadUtil(Bot bot) {
-        this.bot = bot;
+    public WadUtil() {
         this.owo = new OwO.Builder()
-                .setKey(bot.owoToken())
+                .setKey(WiiLinkBot.getInstance().owoToken())
                 .setUploadUrl("https://wiilink.is-pretty.cool/")
                 .build();
     }
 
     public String uploadWad(String wadFilename, String userId) throws Throwable {
-        byte[] wadData = Files.readAllBytes(Paths.get(bot.wadPath(), wadFilename));
+        byte[] wadData = Files.readAllBytes(Paths.get(WiiLinkBot.getInstance().wadPath(), wadFilename));
         int written = 0;
         int position = wadData.length - 64;
 

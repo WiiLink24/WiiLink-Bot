@@ -86,7 +86,7 @@ public enum CodeType
     {
         for(CodeType type : values())
         {
-            if(code.equalsIgnoreCase(type.getDisplayName()))
+            if(code.equalsIgnoreCase(type.getColumn()))
                 return type;
         }
 

@@ -15,13 +15,14 @@ public class Database {
     public void insertWiiId(String discordId, Integer wiiId) throws SQLException {
         try (Connection con = Bot.dominosPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement("""
-                            INSERT INTO "user" (discord_id, basket, wii_id) VALUES (?, ?, ?) ON CONFLICT(discord_id) DO UPDATE SET basket = ?, wii_id = ?
+                            INSERT INTO "user" (discord_id, basket, wii_id) VALUES (?, ?, ?) ON CONFLICT(wii_id) DO UPDATE SET basket = ?, wii_id = ?, discord_id = ?
                             """);
             pst.setString(1, discordId);
             pst.setString(2, "[]");
             pst.setInt(3, wiiId);
             pst.setString(4, "[]");
             pst.setInt(5, wiiId);
+            pst.setString(6, discordId);
             pst.executeUpdate();
         }
     }

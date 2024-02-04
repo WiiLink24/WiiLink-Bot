@@ -1,6 +1,5 @@
 package com.wiilink24.bot.events;
 
-import com.wiilink24.bot.Bot;
 import com.wiilink24.bot.commands.misc.*;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

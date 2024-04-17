@@ -67,5 +67,8 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("roleinfo")) {
             new RoleInfo().roleInfo(event);
         }
+        else if (event.getName().equals("wiinodel")) {
+            new WiiNumber().deleteNumber(event);
+        }
     }
 }

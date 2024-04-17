@@ -1,7 +1,6 @@
 package com.wiilink24.bot;
 
 import com.google.common.cache.Cache;
-import com.wiilink24.bot.commands.testing.UploadWad;
 import com.wiilink24.bot.events.ButtonListener;
 import com.wiilink24.bot.events.SelectionBoxListener;
 import com.wiilink24.bot.events.SlashCommandListener;
@@ -12,16 +11,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import okhttp3.OkHttpClient;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -33,6 +23,9 @@ import java.util.concurrent.ExecutionException;
 public class Bot {
     static BasicDataSource connectionPool;
     static BasicDataSource dominosPool;
+
+    static BasicDataSource mailPool;
+
     private final OkHttpClient httpClient = new OkHttpClient();
 
     private final Cache<Long, Map<CodeType, Map<String, String>>> codeCache = new SimpleCacheBuilder<>(3).build();
@@ -53,6 +46,13 @@ public class Bot {
         dominosPool.setPassword(dominosDbPass());
         dominosPool.setUrl(dominosDbUrl());
         dominosPool.setInitialSize(3);
+
+        mailPool = new BasicDataSource();
+        mailPool.setDriverClassName("org.postgresql.Driver");
+        mailPool.setUsername(mailDbUser());
+        mailPool.setPassword(mailDbPass());
+        mailPool.setUrl(mailDbUrl());
+        mailPool.setInitialSize(3);
 
         // Start Sentry
         Sentry.init( sentryOptions -> {
@@ -99,6 +99,18 @@ public class Bot {
 
     public String dominosDbUrl() {
         return config.dominosCreds[2];
+    }
+
+    public String mailDbUser() {
+        return config.mailCreds[0];
+    }
+
+    public String mailDbPass() {
+        return config.mailCreds[1];
+    }
+
+    public String mailDbUrl() {
+        return config.mailCreds[2];
     }
 
     public String wadPath() {

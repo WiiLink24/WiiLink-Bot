@@ -8,6 +8,7 @@ public class Config {
     public String discordToken;
     public String[] databaseCreds;
     public String[] dominosCreds;
+    public String[] mailCreds;
     public String sentryDSN;
     public String owoToken;
     public String wadsDir;
@@ -17,6 +18,7 @@ public class Config {
         discordToken = getToken();
         databaseCreds = getDatabaseCreds();
         dominosCreds = getDominosDatabaseCreds();
+        mailCreds = getMailDatabaseCreds();
         sentryDSN = getSentryDSN();
         owoToken = getOwoCreds();
         wadsDir = getWadsDirectory();
@@ -49,6 +51,17 @@ public class Config {
 
         // Change the IP and port if needed.
         String database = "jdbc:postgresql://localhost:" + port + "/" + getString("DOM_NAME");
+
+        return new String[]{user, password, database};
+    }
+
+    public String[] getMailDatabaseCreds() {
+        String user = getString("MAIL_DB_USER");
+        String password = getString("MAIL_DB_PASS");
+        String port = getString("MAIL_DB_PORT") == null ? "5432" : getString("MAIL_DB_PORT");
+
+        // Change the IP and port if needed.
+        String database = "jdbc:postgresql://localhost:" + port + "/" + getString("MAIL_DB_NAME");
 
         return new String[]{user, password, database};
     }

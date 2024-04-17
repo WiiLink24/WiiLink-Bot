@@ -27,13 +27,13 @@ public class Database {
         }
     }
 
-    public void deleteWiiNumber(String num) throws SQLException {
+    public void deleteWiiNumber(Long num) throws SQLException {
         try (Connection con = Bot.mailPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement("""
                             DELETE FROM accounts WHERE mlid = ?
                             """);
 
-            pst.setString(1, num);
+            pst.setLong(1, num);
             pst.executeUpdate();
         }
     }

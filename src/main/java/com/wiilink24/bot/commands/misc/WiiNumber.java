@@ -16,7 +16,7 @@ public class WiiNumber {
 
     public void deleteNumber(SlashCommandInteractionEvent event) {
         try {
-            String num = event.getOption("wiino").getAsString();
+            Long num = event.getOption("wiino").getAsLong();
             database.deleteWiiNumber(num);
             event.reply("Successfully deleted Wii Number " + num).queue();
         } catch (SQLException e) {

@@ -32,11 +32,13 @@ public class UploadWad {
         title = title.trim();
         description = description.trim();
 
+        event.deferReply().queue();
+
         int interactionId;
         try {
             interactionId = database.insertWad(filename, title);
         } catch (SQLException e) {
-            event.reply("Unable to insert WAD to database.").queue();
+            event.getHook().sendMessage("Unable to insert WAD to database.").queue();
             Sentry.captureException(e);
             return;
         }
@@ -54,7 +56,7 @@ public class UploadWad {
                 )
                 .queue();
 
-        event.reply("Successfully uploaded WAD").queue();
+        event.getHook().sendMessage("Successfully uploaded WAD").queue();
     }
 }
 

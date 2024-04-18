@@ -70,11 +70,7 @@ public class Bot {
     }
 
     public static String patchesChannel() {
-        return "894316256788893706";
-    }
-
-    public static String developerRoleId() {
-        return "750591972044963850";
+        return "1191513827104264352";
     }
 
     public String dbUser() {

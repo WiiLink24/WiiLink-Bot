@@ -1,6 +1,7 @@
 package com.wiilink24.bot.events;
 
 import com.wiilink24.bot.commands.misc.*;
+import com.wiilink24.bot.commands.testing.UploadWad;
 import io.sentry.Sentry;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -66,6 +67,9 @@ public class SlashCommandListener extends ListenerAdapter {
         }
         else if (event.getName().equals("roleinfo")) {
             new RoleInfo().roleInfo(event);
+        }
+        else if (event.getName().equals("uploadwad")) {
+            new UploadWad().uploadWad(event);
         }
         else if (event.getName().equals("wiinodel")) {
             new WiiNumber().deleteNumber(event);

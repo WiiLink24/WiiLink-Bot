@@ -53,8 +53,8 @@ public class SlashCommandListener extends ListenerAdapter {
         else if (event.getName().equals("ping")) {
             new Ping().ping(event);
         }
-        else if (event.getName().equals("riitag")) {
-            new RiiTag().riiTag(event);
+        else if (event.getName().equals("linktag")) {
+            new LinkTag().linkTag(event);
         }
         else if (event.getName().equals("serverinfo")) {
             new ServerInfo().serverInfo(event);

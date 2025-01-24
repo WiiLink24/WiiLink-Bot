@@ -244,7 +244,7 @@ public class ErrorCodes {
         put(103409, "If you are getting this error while doing something with Wii Mail, check if you patched the nwc24msg.cfg correctly using the Mail-Patcher. https://bit.ly/2QUrsyD");
         put(104409, "If you are getting this error while doing something with Wii Mail, check if you patched the nwc24msg.cfg correctly using the Mail-Patcher. https://bit.ly/2QUrsyD");
         put(105409, "If you are getting this error while doing something with Wii Mail, check if you patched the nwc24msg.cfg correctly using the Mail-Patcher. https://bit.ly/2QUrsyD");
-        put(107006, "If you are getting this on the News Channel, this error means that the total size of the news files on the server is more than the Wii can handle. If so, please tell support you're getting this error and tell him your country and language your Wii is set to.");
+        put(107006, "If you are getting this on the News Channel, this error means that the total size of the news files on the server is more than the Wii can handle. If so, please tell support you're getting this error and tell them your country and language your Wii is set to.");
         put(107245, "Your IOS probably aren't patched. Go to https://wii.guide/riiconnect24 for instructions on how to patch them.");
         put(107304, "This error can be caused by your ISP blocking custom DNS servers. Turn on Auto-obtain DNS in the Wii Settings, or use https://github.com/RiiConnect24/DNS-Server/releases/latest");
         put(107305, "Try again. If it still doesn't work, it might be a problem with your Internet or RiiConnect24's servers.");

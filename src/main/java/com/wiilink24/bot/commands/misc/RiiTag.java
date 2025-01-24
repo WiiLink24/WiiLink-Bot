@@ -36,7 +36,7 @@ public class RiiTag
                 public void onFailure(Call call, IOException e)
                 {
                     event.getHook().sendMessage("WOW! RiiTag has timed out! What a surprise, indeed " +
-                            "||it's not a surprise, at all||.\n Complain to Larsenv, I guess.").queue();
+                            "||it's not a surprise, at all||.\n Complain to support, I guess.").queue();
                 }
 
                 @Override

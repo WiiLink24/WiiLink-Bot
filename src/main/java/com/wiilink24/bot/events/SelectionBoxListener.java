@@ -27,7 +27,7 @@ public class SelectionBoxListener extends ListenerAdapter {
                         .addField("News", "Gets all WiiLink news ever written. Takes no arguments", false)
                         .addField("OCR", "Reads text from an image using Google Cloud. Usage: `/ocr [url]`", false)
                         .addField("Ping", "Gets the gateway ping. Takes no arguments", false)
-                        .addField("RiiTag", "Gets your RiiTag or the specified user's RiiTag. Usage: `/riitag <user>`", false)
+                        .addField("LinkTag", "Gets your LinkTag or the specified user's LinkTag. Usage: `/linktag <user>`", false)
                         .addField("Server Info", "Gets info about the current server. Takes no arguments", false)
                         .addField("Translate", "Translates text into the specified language by using DeepL. Usage: `/translate [text]`", false)
                         .addField("User Info", "Gets information about you or the specified user. Usage: `/userinfo <user>`", false);

@@ -13,13 +13,13 @@ import okhttp3.Response;
 
 import java.io.IOException;
 
-public class RiiTag
+public class LinkTag
 {
     private final String URL = "https://tag.rc24.xyz/%s/tag.max.png?randomizer=%f";
 
     private final OkHttpClient httpClient = WiiLinkBot.getInstance().getHttpClient();
 
-    public void riiTag(SlashCommandInteractionEvent event)
+    public void linkTag(SlashCommandInteractionEvent event)
     {
         User user = event.getUser();
         if (!event.getOptionsByName("user").isEmpty()) {
@@ -35,8 +35,7 @@ public class RiiTag
                 @Override
                 public void onFailure(Call call, IOException e)
                 {
-                    event.getHook().sendMessage("WOW! RiiTag has timed out! What a surprise, indeed " +
-                            "||it's not a surprise, at all||.\n Complain to Larsenv, I guess.").queue();
+                    event.getHook().sendMessage("LinkTag timed out while processing your request.").queue();
                 }
 
                 @Override
@@ -44,7 +43,7 @@ public class RiiTag
                 {
                     if(response.code() == 404)
                     {
-                        event.getHook().sendMessage("**" + finalUser.getAsTag() + "** does not have a RiiTag!").queue();
+                        event.getHook().sendMessage("**" + finalUser.getAsTag() + "** does not have a LinkTag!").queue();
                         return;
                     }
 
@@ -62,7 +61,7 @@ public class RiiTag
     private void displayTag(SlashCommandInteractionEvent event, User user)
     {
         EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setAuthor(user.getAsTag() + "'s RiiTag", null, user.getEffectiveAvatarUrl())
+                .setAuthor(user.getAsTag() + "'s LinkTag", null, user.getEffectiveAvatarUrl())
                 .setColor(0x00FF00)
                 .setImage(String.format(URL, user.getId(), Math.random()));
 

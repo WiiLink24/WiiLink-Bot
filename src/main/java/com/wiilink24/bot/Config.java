@@ -7,7 +7,6 @@ public class Config {
 
     public String discordToken;
     public String[] databaseCreds;
-    public String[] dominosCreds;
     public String[] mailCreds;
     public String sentryDSN;
     public String owoToken;
@@ -17,7 +16,6 @@ public class Config {
     public Config() {
         discordToken = getToken();
         databaseCreds = getDatabaseCreds();
-        dominosCreds = getDominosDatabaseCreds();
         mailCreds = getMailDatabaseCreds();
         sentryDSN = getSentryDSN();
         owoToken = getOwoCreds();
@@ -40,17 +38,6 @@ public class Config {
 
         // Change the IP and port if needed.
         String database = "jdbc:postgresql://localhost:" + port + "/" + getString("DB_NAME");
-
-        return new String[]{user, password, database};
-    }
-
-    public String[] getDominosDatabaseCreds() {
-        String user = getString("DOM_USER");
-        String password = getString("DOM_PASS");
-        String port = getString("DOM_PORT") == null ? "5432" : getString("DOM_PORT");
-
-        // Change the IP and port if needed.
-        String database = "jdbc:postgresql://localhost:" + port + "/" + getString("DOM_NAME");
 
         return new String[]{user, password, database};
     }

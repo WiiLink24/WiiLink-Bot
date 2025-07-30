@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 
 public class Bot {
     static BasicDataSource connectionPool;
-    static BasicDataSource dominosPool;
 
     static BasicDataSource mailPool;
 
@@ -39,13 +38,6 @@ public class Bot {
         connectionPool.setPassword(dbPass());
         connectionPool.setUrl(dbUrl());
         connectionPool.setInitialSize(3);
-
-        dominosPool = new BasicDataSource();
-        dominosPool.setDriverClassName("org.postgresql.Driver");
-        dominosPool.setUsername(dominosDbUser());
-        dominosPool.setPassword(dominosDbPass());
-        dominosPool.setUrl(dominosDbUrl());
-        dominosPool.setInitialSize(3);
 
         mailPool = new BasicDataSource();
         mailPool.setDriverClassName("org.postgresql.Driver");
@@ -83,18 +75,6 @@ public class Bot {
 
     public String dbUrl() {
         return config.databaseCreds[2];
-    }
-
-    public String dominosDbUser() {
-        return config.dominosCreds[0];
-    }
-
-    public String dominosDbPass() {
-        return config.dominosCreds[1];
-    }
-
-    public String dominosDbUrl() {
-        return config.dominosCreds[2];
     }
 
     public String mailDbUser() {

@@ -35,9 +35,6 @@ public class SlashCommandListener extends ListenerAdapter {
                 event.reply("An error has occurred. Contact Sketch.").queue();
             }
         }
-        else if (event.getName().equals("dominos")) {
-            new Dominos().dominos(event);
-        }
         else if (event.getName().equals("dns")) {
             new DNS().dns(event);
         }

@@ -32,7 +32,7 @@ package com.wiilink24.bot.utils;
 
 public enum CodeType
 {
-    GAME(0, "games", "Game", "664931537225121802", "**Games**", "game"),
+    GAME(0, "game", "Game", "664931537225121802", "**Games**", "game"),
     NNID(1, "nnid", "Nintendo Network", "287655797104836608", "**Nintendo Network ID**", "nnid"),
     PSN(2, "psn", "PlayStation Network", "545097818319224832", "**PlayStation Network ID**", "psn"),
     SWITCH(3, "switch", "Switch", "287652338791874560", "**Switch**", "switch"),

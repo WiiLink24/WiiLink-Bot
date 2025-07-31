@@ -32,6 +32,7 @@ public class SlashCommandListener extends ListenerAdapter {
                 new CodeHandler().codeHandler(event);
             } catch (SQLException e) {
                 Sentry.captureException(e);
+                System.out.println(e.getMessage());
                 event.reply("An error has occurred. Contact Sketch.").queue();
             }
         }

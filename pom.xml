@@ -174,5 +174,11 @@
             <artifactId>owo.java</artifactId>
             <version>8a05397f3e</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
 </project>

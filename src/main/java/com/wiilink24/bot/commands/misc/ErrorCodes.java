@@ -247,7 +247,7 @@ public class ErrorCodes {
         put(231409, "You are not using the patched WAD for the Everybody Votes Channel. Please follow https://wiilink.ca/guide/install.");
         put(239001, "This is a server-side issue that does not affect functionality, just press OK.");
         put(258302, "Follow https://wiilink.ca/guide/update to update the Check Mii Out Channel.");
-        put(260400, "If you are receiving this in the Nintendo Channel, follow https://wiilink.ca/guide/update to update it.")
+        put(260400, "If you are receiving this in the Nintendo Channel, follow https://wiilink.ca/guide/update to update it.");
         put(33020, "If you are receiving this in the Check Mii Out Channel, follow https://wiilink.ca/guide/update to update it.");
         put(51330, "Try changing your router's settings to use 802.11 b/g/n. If that doesn't work, try the suggestions found on Nintendo's site. https://bit.ly/2OoC0c2");
         put(51331, "Try changing your router's settings to use 802.11 b/g/n. If that doesn't work, try the suggestions found on Nintendo's site. https://bit.ly/2OoC0c2");

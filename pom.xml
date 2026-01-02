@@ -150,7 +150,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.0</version>
+            <version>42.5.5</version>
         </dependency>
 
         <!-- https://jdbc.postgresql.org/documentation/head/ds-ds.html

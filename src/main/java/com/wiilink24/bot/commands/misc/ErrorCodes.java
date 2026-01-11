@@ -59,7 +59,12 @@ public class ErrorCodes {
     public void errorCode(SlashCommandInteractionEvent event) {
 
         String code = event.getOption("code").getAsString();
-        String api = event.getOption("api").getAsString();
+        
+        String api = "";
+        if (!event.getOptionsByName("api").isEmpty()) {
+            api = event.getOption("api").getAsString();
+        }
+
         Matcher channelCheck = CHANNEL.matcher(code);
 
         // Check for Fore/News

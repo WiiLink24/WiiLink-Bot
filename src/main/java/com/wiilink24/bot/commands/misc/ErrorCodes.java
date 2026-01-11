@@ -44,9 +44,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Looks up errors using the Wiimmfi API.
+ * Looks up errors using the Wiimmfi or WiiLink WFC API.
  *
- * @author Spotlight, Artuto, Gamebuster
+ * @author Spotlight, Artuto, Gamebuster, Harry
  */
 
 public class ErrorCodes {
@@ -59,6 +59,7 @@ public class ErrorCodes {
     public void errorCode(SlashCommandInteractionEvent event) {
 
         String code = event.getOption("code").getAsString();
+        String api = event.getOption("api").getAsString();
         Matcher channelCheck = CHANNEL.matcher(code);
 
         // Check for Fore/News
@@ -123,90 +124,164 @@ public class ErrorCodes {
                 return;
             }
 
-            // Get method
-            String method = "e=" + code;
-            String url = "https://wiimmfi.de/error?" + method + "&m=json";
+            switch (api) {
+                case "wwfc":
+                    wwfcError(event);
+                    return;
+                default:
+                    wiimmfiError(event);
+                    return;
+            }
+        }
+    }
 
-            Request request = new Request.Builder().url(url).build();
-            httpClient.newCall(request).enqueue(new Callback() {
+    public static void wiimmfiError(SlashCommandInteractionEvent event) {
+        // Get method
+        String method = "e=" + event.getOption("code").getAsString();;
+        String url = "https://wiimmfi.de/error?" + method + "&m=json";
 
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    event.reply("Hm, something went wrong on our end. Check Wiimmfi's website is up?").setEphemeral(true).queue();}
+        Request request = new Request.Builder().url(url).build();
+        httpClient.newCall(request).enqueue(new Callback() {
 
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                event.reply("Hm, something went wrong on our end. Check Wiimmfi's website is up?").setEphemeral(true).queue();}
 
-                    if (!(response.isSuccessful())) {
-                        onFailure(call, new IOException("Not success response code: " + response.code()));
-                        response.close();
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
+
+                if (!(response.isSuccessful())) {
+                    onFailure(call, new IOException("Not success response code: " + response.code()));
+                    response.close();
                         return;
-                    }
+                }
 
-                    try (response) {
+                try (response) {
 
-                        String description;
-                        JSONFormat json = gson.fromJson(new InputStreamReader(response.body().byteStream()), JSONFormat[].class)[0];
-                        boolean success = json.found == 1;
-                        EmbedBuilder embed = new EmbedBuilder();
+                    String description;
+                    JSONFormat json = gson.fromJson(new InputStreamReader(response.body().byteStream()), JSONFormat[].class)[0];
+                    boolean success = json.found == 1;
+                    EmbedBuilder embed = new EmbedBuilder();
 
-                        if (!success) {
-                            embed.setColor(Color.RED);
-                            embed.setDescription("Could not find the specified error from Wiimmfi.");
-                            return;
-                        } else {
+                    if (!success) {
+                        embed.setColor(Color.RED);
+                        embed.setDescription("Could not find the specified error from Wiimmfi.");
+                        return;
+                    } else {
 
-                            StringBuilder infoBuilder = new StringBuilder();
+                        StringBuilder infoBuilder = new StringBuilder();
 
-                            for (InfoListFormat format : json.infolists) {
+                        for (InfoListFormat format : json.infolists) {
 
-                                String htmlToMarkdown = format.info;
-                                Document infoSegment = Jsoup.parseBodyFragment(htmlToMarkdown);
+                            String htmlToMarkdown = format.info;
+                            Document infoSegment = Jsoup.parseBodyFragment(htmlToMarkdown);
 
-                                // Replace links with Markdown format
-                                for (Element hRef : infoSegment.select("a[href]")) {
-                                    // So, we have to transform &amp; back to &.
-                                    // It's funny, the same issue happened with Nokogiri and Ruby.
-                                    String realOuterHTML = hRef.outerHtml();
-                                    realOuterHTML = realOuterHTML.replace("&amp;", "&");
-                                    htmlToMarkdown = htmlToMarkdown.replace(realOuterHTML, "[" + hRef.text() + "](" + hRef.attr("href") + ")");
-                                }
-
-                                // Parse again to handle updates
-                                infoSegment = Jsoup.parseBodyFragment(htmlToMarkdown);
-                                for (Element bold : infoSegment.select("b"))
-                                    htmlToMarkdown = htmlToMarkdown.replace(bold.outerHtml(), "**" + bold.text() + "**");
-
-                                // ...and parse, once more.
-                                infoSegment = Jsoup.parseBodyFragment(htmlToMarkdown);
-                                for (Element italics : infoSegment.select("i"))
-                                    htmlToMarkdown = htmlToMarkdown.replace(italics.outerHtml(), "*" + italics.text() + "*");
-
-                                infoBuilder.append(format.type).append(" for error ").append(format.name).append(": ").append(htmlToMarkdown).append("\n");
+                            // Replace links with Markdown format
+                            for (Element hRef : infoSegment.select("a[href]")) {
+                                // So, we have to transform &amp; back to &.
+                                // It's funny, the same issue happened with Nokogiri and Ruby.
+                                String realOuterHTML = hRef.outerHtml();
+                                realOuterHTML = realOuterHTML.replace("&amp;", "&");
+                                htmlToMarkdown = htmlToMarkdown.replace(realOuterHTML, "[" + hRef.text() + "](" + hRef.attr("href") + ")");
                             }
 
-                            // Check for dev note
-                            if (codeNotes.containsKey(json.error))
-                                infoBuilder.append("Note from WiiLink: ").append(codeNotes.get(json.error));
+                            // Parse again to handle updates
+                            infoSegment = Jsoup.parseBodyFragment(htmlToMarkdown);
+                            for (Element bold : infoSegment.select("b"))
+                                htmlToMarkdown = htmlToMarkdown.replace(bold.outerHtml(), "**" + bold.text() + "**");
 
-                            String title = "Here's information about your error:";
-                            description = infoBuilder.toString();
-                            String footer = "All information is from Wiimmfi unless noted.";
-                            embed.setTitle(title);
-                            embed.setDescription(description);
-                            embed.setColor(Color.decode("#D32F2F"));
-                            embed.setFooter(footer, null);
-                            event.replyEmbeds(embed.build()).queue();
+                            // ...and parse, once more.
+                            infoSegment = Jsoup.parseBodyFragment(htmlToMarkdown);
+                            for (Element italics : infoSegment.select("i"))
+                                htmlToMarkdown = htmlToMarkdown.replace(italics.outerHtml(), "*" + italics.text() + "*");
+
+                            infoBuilder.append(format.type).append(" for error ").append(format.name).append(": ").append(htmlToMarkdown).append("\n");
                         }
 
-                    } finally {
-                        response.close();
+                        // Check for dev note
+                        if (codeNotes.containsKey(json.error))
+                            infoBuilder.append("Note from WiiLink: ").append(codeNotes.get(json.error));
+
+                        String title = "Here's information about your error:";
+                        description = infoBuilder.toString();
+                        String footer = "All information is from Wiimmfi unless noted.";
+                        embed.setTitle(title);
+                        embed.setDescription(description);
+                        embed.setColor(Color.decode("#D32F2F"));
+                        embed.setFooter(footer, null);
+                        event.replyEmbeds(embed.build()).queue();
                     }
 
+                } finally {
                     response.close();
                 }
-            });
-        }
+
+                response.close();
+            }
+        });
+    }
+
+    public static void wwfcError(SlashCommandInteractionEvent event) {
+        // Get method
+        String method = "code=" + event.getOption("code").getAsString();;
+        String url = "https://wfc-error.wiilink.ca/error?" + method;
+
+        Request request = new Request.Builder().url(url).build();
+        httpClient.newCall(request).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                event.reply("Hm, something went wrong on our end. [Check WiiLink WFC is up?](https://status.wiilink.ca)").setEphemeral(true).queue();}
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
+
+                if (!(response.isSuccessful())) {
+                    onFailure(call, new IOException("Not success response code: " + response.code()));
+                    response.close();
+                        return;
+                }
+
+                try (response) {
+
+                    String description;
+                    JSONFormat json = gson.fromJson(new InputStreamReader(response.body().byteStream()), JSONFormat[].class)[0];
+                    boolean success = json.found == 1;
+                    EmbedBuilder embed = new EmbedBuilder();
+
+                    if (!success) {
+                        embed.setColor(Color.RED);
+                        embed.setDescription("Could not find the specified error from WiiLink WFC.");
+                        return;
+                    } else {
+
+                        StringBuilder infoBuilder = new StringBuilder();
+
+                        for (InfoListFormat format : json.infolists) {
+                            infoBuilder.append(format.type).append(" for error ").append(format.name).append(": ").append(format.info).append("\n");
+                        }
+
+                        // Check for dev note
+                        if (codeNotes.containsKey(json.error))
+                            infoBuilder.append("Note from WiiLink: ").append(codeNotes.get(json.error));
+
+                        String title = "Here's information about your error:";
+                        description = infoBuilder.toString();
+                        String footer = "All information is from WiiLink WFC unless noted.";
+                        embed.setTitle(title);
+                        embed.setDescription(description);
+                        embed.setColor(Color.decode("#D32F2F"));
+                        embed.setFooter(footer, null);
+                        event.replyEmbeds(embed.build()).queue();
+                    }
+
+                } finally {
+                    response.close();
+                }
+
+                response.close();
+            }
+        });
     }
 
     private static final class JSONFormat {

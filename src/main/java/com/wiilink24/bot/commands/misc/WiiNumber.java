@@ -15,8 +15,14 @@ public class WiiNumber {
     }
 
     public void deleteNumber(SlashCommandInteractionEvent event) {
+        String num = event.getOption("wiino").getAsString();
+        num = num.replace("-", "");
+        if (num.length() != 16) {
+            event.reply("Incorrect length! Wii Numbers must be 16 digits long.").queue();
+            return;
+        }
+        
         try {
-            String num = event.getOption("wiino").getAsString();
             database.deleteWiiNumber(num);
             event.reply("Successfully deleted Wii Number " + num).queue();
         } catch (SQLException e) {

@@ -35,9 +35,10 @@ public class Config {
         String user = getString("DB_USER");
         String password = getString("DB_PASS");
         String port = getString("DB_PORT") == null ? "5432" : getString("DB_PORT");
+        String hostname = getString("DB_HOSTNAME");
 
         // Change the IP and port if needed.
-        String database = "jdbc:postgresql://localhost:" + port + "/" + getString("DB_NAME");
+        String database = "jdbc:postgresql://" + hostname + ":" + port + "/" + getString("DB_NAME");
 
         return new String[]{user, password, database};
     }
@@ -46,9 +47,10 @@ public class Config {
         String user = getString("MAIL_DB_USER");
         String password = getString("MAIL_DB_PASS");
         String port = getString("MAIL_DB_PORT") == null ? "5432" : getString("MAIL_DB_PORT");
+        String hostname = getString("MAIL_DB_HOSTNAME");
 
         // Change the IP and port if needed.
-        String database = "jdbc:postgresql://localhost:" + port + "/" + getString("MAIL_DB_NAME");
+        String database = "jdbc:postgresql://" + hostname + ":" + port + "/" + getString("MAIL_DB_NAME");
 
         return new String[]{user, password, database};
     }

@@ -7,4 +7,10 @@ COPY src src
 
 RUN mvn package
 
-CMD ["java", "-jar", "target/WiiLink-Bot.jar"]
+FROM eclipse-temurin:21-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/target/WiiLink-Bot.jar .
+
+CMD ["java", "-jar", "WiiLink-Bot.jar"]

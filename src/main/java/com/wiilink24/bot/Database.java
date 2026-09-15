@@ -12,6 +12,18 @@ import java.util.Map;
 public class Database {
     private final Gson gson = new Gson();
 
+    public boolean getWiiNumberRegistration(String num) throws SQLException {
+        try (Connection con = Bot.mailPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement("""
+                SELECT 1 FROM accounts WHERE mlid = ? LIMIT 1
+            """);
+            pst.setString(1, num);
+            ResultSet set = pst.executeQuery();
+
+            return set.next();
+        }
+    }
+
     public void deleteWiiNumber(String num) throws SQLException {
         try (Connection con = Bot.mailPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement("""

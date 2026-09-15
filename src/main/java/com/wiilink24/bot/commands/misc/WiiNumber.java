@@ -23,6 +23,11 @@ public class WiiNumber {
         }
         
         try {
+            boolean registered = database.getWiiNumberRegistration(num);
+            if (!registered) {
+                event.reply("Wii Number is not registered with WiiLink! Did you type it correctly?").queue();
+                return;
+            }
             database.deleteWiiNumber(num);
             event.reply("Successfully deleted Wii Number " + num).queue();
         } catch (SQLException e) {

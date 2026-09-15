@@ -16,7 +16,7 @@ public class WiiNumber {
 
     public void deleteNumber(SlashCommandInteractionEvent event) {
         String num = event.getOption("wiino").getAsString();
-        num = num.replace("-", "");
+        num = num.replaceAll("[^0-9]", "");
         if (num.length() != 16) {
             event.reply("Incorrect length! Wii Numbers must be 16 digits long.").queue();
             return;

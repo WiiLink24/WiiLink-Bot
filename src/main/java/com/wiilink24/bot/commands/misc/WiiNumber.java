@@ -29,7 +29,13 @@ public class WiiNumber {
                 return;
             }
             database.deleteWiiNumber(num);
-            event.reply("Successfully deleted Wii Number " + num).queue();
+
+            String fancyNum = num.substring(0, 4) + "-"
+                + num.substring(4, 8) + "-"
+                + num.substring(8, 12) + "-"
+                + num.substring(12, 16);
+
+            event.reply("Successfully deleted Wii Number " + fancyNum).queue();
         } catch (SQLException e) {
             event.reply("Unable to delete Wii Number.").queue();
             System.out.println(e.getMessage());
